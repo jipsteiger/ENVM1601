@@ -27,7 +27,7 @@ pumps = {
 
 def main():
     pump_data = pd.read_csv(
-        "Q4/RTC/data/Dean Town Pump Data.csv",
+        "RTC/data/Dean Town Pump Data.csv",
         delimiter=",",
         index_col=0,
         parse_dates=True,
@@ -35,7 +35,7 @@ def main():
         skiprows=1,
     )
     head_data = pd.read_csv(
-        "Q4/RTC/data/Dean Town Head Data.csv",
+        "RTC/data/Dean Town Head Data.csv",
         delimiter=",",
         index_col=0,
         parse_dates=True,
@@ -86,7 +86,7 @@ main()
 
 def main2():
     pump_data = pd.read_csv(
-        "Q4/RTC/data/Dean Town Pump Data.csv",
+        "RTC/data/Dean Town Pump Data.csv",
         delimiter=",",
         index_col=0,
         parse_dates=True,
@@ -94,7 +94,7 @@ def main2():
         skiprows=1,
     )
     head_data = pd.read_csv(
-        "Q4/RTC/data/Dean Town Head Data.csv",
+        "RTC/data/Dean Town Head Data.csv",
         delimiter=",",
         index_col=0,
         parse_dates=True,
@@ -103,10 +103,10 @@ def main2():
     )
 
     pump_model = pd.read_excel(
-        "Q4/RTC/data/pump_data_model_2.xlsx", index_col=0, parse_dates=True
+        "RTC/data/pump_data_model_2.xlsx", index_col=0, parse_dates=True
     )
     cso_model = pd.read_excel(
-        "Q4/RTC/data/cso_data_model_2.xlsx", index_col=0, parse_dates=True
+        "RTC/data/cso_data_model_2.xlsx", index_col=0, parse_dates=True
     )
 
     plt.figure(figsize=(15, 15))
