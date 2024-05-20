@@ -1,6 +1,7 @@
 import pyswmm as ps
 import swmm_api as sa
 import datetime as dt
+import pandas as pd
 
 file_loc = r"RTC/data/Dean Town_testing.inp"
 
@@ -13,7 +14,10 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
         sim.report_start = dt.datetime(year=2020, month=start_month, day=start_day)
         sim.start_time = dt.datetime(year=2020, month=start_month, day=start_day)
         sim.end_time = dt.datetime(year=2020, month=end_month, day=end_day)
+        # p_20_2  p_21_2   p10_1   p_2_1
         for step in sim:
+            if (nodes["j_1"].depth <= 0.20) & (nodes["j_10"].depth >= 0.20):
+                links["p10_1"].target_setting = 1
             if nodes["j_1"].depth >= 0.25:
                 links["WWTP_inlet"].target_setting = 1
             if nodes["j_1"].depth <= 0.10:
@@ -48,13 +52,23 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
     for i, cso in enumerate(["cso_1", "cso_20", "cso_2a", "cso_21a", "cso_10", "cso_21b", "cso_2b"]):
         if name == 'big rain event':
             som += output["node"][cso]["total_inflow"].sum() * summer[i] #For goss river recrreation
+            csos[cso] += output["node"][cso]["total_inflow"].sum() * summer[i]
         else:
             som += output["node"][cso]["total_inflow"].sum() * winter[i] #No recreation
+            csos[cso] += output["node"][cso]["total_inflow"].sum() * winter[i]
         print(f'{cso}: {output["node"][cso]["total_inflow"].sum():.3f}')
     som += output.system['']['flooding'].sum() * 100 #Flooding addition
     print(f"flooding is {output.system['']['flooding'].sum():.3f}")
     print(som)
     return som
+
+csos = {"cso_1": 0,
+        'cso_20': 0,
+        'cso_2a': 0,
+        'cso_21a': 0,
+        'cso_10': 0,
+        'cso_21b': 0,
+        'cso_2b': 0}
 
 rain1 = heuristic_sim(6, 11, 6, 16, 'big rain event') #Big rain event SUMMER MONTH
 rain2 = heuristic_sim(12, 10, 12, 20, 'Little rain event') #Little rain event
@@ -63,5 +77,7 @@ rain4 = heuristic_sim(2, 8, 2, 12, 'Much rain in 3 days') #Much rain in 3 days
 rain5 = heuristic_sim(2, 20, 2, 22, 'Peak rain intensity') #Peak rain intensity
 sum_rain = rain1 + rain2 + rain3 + rain4 + rain5
 print(f'Reluting Objective function value is {sum_rain}')
+print(f'Contribution per CSO:')
+pd.DataFrame(csos, index=["CSO spill"])
 
 
