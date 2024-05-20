@@ -52,7 +52,7 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
             som += output["node"][cso]["total_inflow"].sum() * winter[i] #No recreation
         print(f'{cso}: {output["node"][cso]["total_inflow"].sum():.3f}')
     som += output.system['']['flooding'].sum() * 100 #Flooding addition
-    print(f'flooding is {output.system['']['flooding'].sum():.3f}')
+    print(f"flooding is {output.system['']['flooding'].sum():.3f}")
     print(som)
     return som
 
