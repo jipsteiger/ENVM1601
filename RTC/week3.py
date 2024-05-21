@@ -4,7 +4,7 @@ import datetime as dt
 import pandas as pd
 import os
 
-file_loc = r"RTC/data/Dean Town_testing.inp"
+file_loc = r"RTC/data/Dean Town_pyswmm.inp"
 
 
 def heuristic_sim(start_month, start_day, end_month, end_day, name):
@@ -20,14 +20,14 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
         sim.end_time = dt.datetime(year=2020, month=end_month, day=end_day)
         # p_20_2  p_21_2   p10_1   p_2_1
         for step in sim:
-            # if (nodes["j_10"].depth <= 0.15) & (nodes["j_1"].depth >= 0.20):
-            #     links["p10_1"].target_setting = 0
+            # if (nodes["j_10"].depth <= 0.20) & (nodes["j_1"].depth >= 0.20):
+            #     links["p10_1"].target_setting = 1
             if nodes["j_10"].depth >= 0.25:
                 links["p10_1"].target_setting = 1
             if nodes["j_10"].depth <= 0.10:
                 links["p10_1"].target_setting = 0
 
-            # if (nodes["j_2"].depth >= 20) & (nodes["j_21"].depth <= 0.15):
+            # if (nodes["j_2"].depth >= 0.20) & (nodes["j_21"].depth <= 0.15):
             #     links["p_21_2"].target_setting = 0
             if nodes["j_21"].depth >= 0.25:
                 links["p_21_2"].target_setting = 1
@@ -36,7 +36,7 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
 
             if nodes["j_1"].depth >= 0.25:
                 links["WWTP_inlet"].target_setting = 1
-            if nodes["j_1"].depth <= 0.10:
+            if nodes["j_1"].depth <= 1.50:
                 links["WWTP_inlet"].target_setting = 0
 
             if nodes["j_21"].depth >= 1.10:
@@ -54,7 +54,7 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
             if nodes["j_2"].depth <= 2.0:
                 links["CSO_Pump_2"].target_setting = 0
 
-    rpt = sa.read_rpt_file(r"RTC\data\Dean Town_testing.rpt")
+    rpt = sa.read_rpt_file(r"RTC\data\Dean Town_pyswmm.rpt")
     output = rpt.outfall_loading_summary
     output = output.drop(["Wastewater_Treatment_Plant"], axis=0)
     flooding = rpt.flow_routing_continuity
@@ -78,7 +78,7 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
         print(f'{cso}: {output.loc[cso, "Total_Volume_10^6 ltr"]:.3f}')
     som += flooding["Flooding Loss"]["Volume_10^6 ltr"] * 10000  # Flooding addition
     print(f"flooding is {flooding['Flooding Loss']['Volume_10^6 ltr']:.3f}")
-    print(f'Objective function contribution: {som} ')
+    print(f"Objective function contribution: {som} ")
     return som
 
 
