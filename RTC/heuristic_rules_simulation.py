@@ -3,6 +3,7 @@ import swmm_api as sa
 import datetime as dt
 import pandas as pd
 import RTC.heuristic_rules as rule
+from typing import List
 
 def main():
     csos = {
@@ -32,7 +33,17 @@ def main():
     display(pd.DataFrame(csos, index=["CSO spill"])) # type: ignore
 
 
-def simulate(start_month, start_day, end_month, end_day, name):
+def simulate(start_month: int, start_day: int, end_month: int, end_day: int, name: str = ''):
+    """Runs the pyswmm simulation, between start month and day until end month and day.
+    For each simulation step pump target is re-set to desired value. 
+
+    Args:
+        start_month (int)
+        start_day (int)
+        end_month (int)
+        end_day (int)
+        name (str, optional): Not used Defaults to ''.
+    """    
     with ps.Simulation(
         r"RTC/data/Dean Town_pyswmm.inp",
     ) as sim:
@@ -52,12 +63,36 @@ def simulate(start_month, start_day, end_month, end_day, name):
             links = assign_target(*rule.p_2_1(nodes), links)
             links = assign_target(*rule.CSO_Pump_2(nodes), links)
 
-def assign_target(id, target, links):
+def assign_target(id: str, target: float, links):
+    """Updates the specific pump target value, based on the pumps name (id),
+    and the target value it has to be. If target is None this means no new rule
+    has to be implemented, otherwise links is updated.
+
+    Args:
+        id (str): corresponding pump name
+        target (float): pump target setting
+        links (_type_): py swmm object
+
+    Returns:
+        _type_:
+    """    
     if target is not None:
         links[id].target_setting = target
     return links  
             
-def process_output(name, csos, som):
+def process_output(name: str, csos: dict, som: float) -> List[float, dict]:
+    """Reads the report file from the ran simulation. Calculates the objective function,
+    updates total cso spillage, and prints relevant information.
+
+    Args:
+        name (str): Name of the event
+        csos (dict): Spillage information per cso
+        som (float): Sum of the objective function value
+
+    Returns:
+        List[float, dict]: Updated sum of objective function and update spillage per cso.
+    """    
+    
     rpt = sa.read_rpt_file(r"RTC\data\Dean Town_pyswmm.rpt")
     output = rpt.outfall_loading_summary
     output = output.drop(["Wastewater_Treatment_Plant"], axis=0)
