@@ -36,7 +36,7 @@ def heuristic_sim(start_month, start_day, end_month, end_day, name):
 
             if nodes["j_1"].depth >= 0.25:
                 links["WWTP_inlet"].target_setting = 1
-            if nodes["j_1"].depth <= 1.50:
+            if nodes["j_1"].depth <= 0.10:
                 links["WWTP_inlet"].target_setting = 0
 
             if nodes["j_21"].depth >= 1.10:
