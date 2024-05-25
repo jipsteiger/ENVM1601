@@ -23,9 +23,9 @@ def p10_1(nodes, target=None):
 
 def p_21_2(nodes, target=None):
     if nodes["j_21"].depth >= 0.25:
-        if (nodes['j_1'].depth <= 0.5):
+        if (nodes['j_2'].depth <= 0.5):
             target = 1
-        elif (nodes['j_1'].depth >= 0.5) & (nodes['j_21'].depth >= 1):
+        elif (nodes['j_2'].depth >= 0.5) & (nodes['j_21'].depth >= 0.9):
             target = 1
         else: 
             target = 0
