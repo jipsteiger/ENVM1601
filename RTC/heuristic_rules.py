@@ -8,7 +8,7 @@ def CSO_Pump_21(nodes, target=None):
     Returns:
         _type_: Name of to be updated pump, target value of that pump
     """   
-    if nodes["j_21"].depth >= 1.5:
+    if nodes["j_21"].depth >= 1.4:
         target = 1
     if (nodes['j_21'].depth >= 0.8) & (nodes['j_2'].depth >= 1.5):
         target = 1
@@ -42,7 +42,9 @@ def p_20_2(nodes, target=None):
     return 'p_20_2', target
 
 def CSO_Pump_2(nodes, target=None):
-    if nodes["j_2"].depth >= 2.0:
+    if nodes["j_2"].depth >= 1.8:
+        target = 1
+    if (nodes['j_20'].depth >= 1.5) or (nodes['j_21'].depth >= 1):
         target = 1
     if nodes["j_2"].depth <= 1.5:
         target = 0    
