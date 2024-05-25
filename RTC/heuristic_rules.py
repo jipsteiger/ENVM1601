@@ -18,7 +18,7 @@ def p_21_2(nodes, target=None):
     if nodes["j_21"].depth >= 0.25:
         if (nodes['j_2'].depth <= 1.8):
             target = 1
-        elif (nodes['j_21'].depth >= 1.4):
+        elif (nodes['j_21'].depth >= 1.4) & (nodes['j_2'].depth <= 2.3):
             target = 1
         else: 
             target = 0
@@ -41,7 +41,7 @@ def p_20_2(nodes, target=None):
 def CSO_Pump_2(nodes, target=None):
     if nodes["j_2"].depth >= 2.1:
         target = 1
-    if nodes["j_2"].depth <= 2:
+    if nodes["j_2"].depth <= 1.5:
         target = 0    
     return 'CSO_Pump_2', target
 
@@ -69,7 +69,7 @@ def p10_1(nodes, target=None):
     if (nodes["j_10"].depth >= 0.25):
         if (nodes['j_1'].depth <= 0.5):
             target = 1
-        elif (nodes['j_10'].depth >= 1.8):
+        elif (nodes['j_10'].depth >= 2):
             target = 1
         else: 
             target = 0
