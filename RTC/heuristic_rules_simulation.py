@@ -23,10 +23,10 @@ def main():
                   [2, 8, 2, 12, "3 major events february"],
                   [2, 20, 2, 22, "Peak intensity event february"]]
     # parameters = [[6, 1, 7, 1, 'SWMM JUNE TEST']] #Test params
-    som = 0
+    som, cso_sum = 0, 0
     for params in parameters:
         simulate(*params)
-        som, csos = process_output(params[-1], csos, som)
+        som, csos, cso_sum = process_output(params[-1], csos, som, cso_sum)
         print('-----------------------------')
     
     print(f"Objective function end result: {som}")
@@ -34,7 +34,7 @@ def main():
     
     now = dt.datetime.now()    
     cso_result = pd.DataFrame(csos, index=[now.strftime('%d/%m %H:%M')])
-    sum_result = pd.DataFrame({'sum': som}, index=[now.strftime('%d/%m %H:%M')])
+    sum_result = pd.DataFrame({'sum': som, 'spill_sum': cso_sum}, index=[now.strftime('%d/%m %H:%M')])
     sim_result = pd.concat([cso_result, sum_result], axis=1)
     
     display(sim_result) # type: ignore
@@ -93,7 +93,7 @@ def assign_target(id: str, target: float, links):
         links[id].target_setting = target
     return links  
             
-def process_output(name: str, csos: dict, som: float):
+def process_output(name: str, csos: dict, som: float, cso_sum: float):
     """Reads the report file from the ran simulation. Calculates the objective function,
     updates total cso spillage, and prints relevant information.
 
@@ -101,6 +101,7 @@ def process_output(name: str, csos: dict, som: float):
         name (str): Name of the event
         csos (dict): Spillage information per cso
         som (float): Sum of the objective function value
+        cso_sum (float): Sum of spillage
 
     Returns:
         List[float, dict]: Updated sum of objective function and update spillage per cso.
@@ -129,11 +130,12 @@ def process_output(name: str, csos: dict, som: float):
             som += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[i]  # No recreation
             csos[cso] += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[i]
         print(f'{cso} spilled: {output.loc[cso, "Total_Volume_10^6 ltr"]:.3f}')
+        cso_sum += output.loc[cso, "Total_Volume_10^6 ltr"]
     som += flooding["Flooding Loss"]["Volume_10^6 ltr"] * 10000  # Flooding addition
     print(f"Flooding loss is: {flooding['Flooding Loss']['Volume_10^6 ltr']:.3f}")
     print(f"Event objective function contribution: {som - initial_sum} ")  
     
-    return som, csos 
+    return som, csos, cso_sum 
 
 if __name__ == '__main__':
     main()
