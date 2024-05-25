@@ -8,7 +8,7 @@ def CSO_Pump_21(nodes, target=None):
     Returns:
         _type_: Name of to be updated pump, target value of that pump
     """   
-    if nodes["j_21"].depth >= 1.8:
+    if nodes["j_21"].depth >= 0.9:
         target = 1
     if nodes["j_21"].depth <= 0.7:
         target = 0
@@ -16,9 +16,9 @@ def CSO_Pump_21(nodes, target=None):
 
 def p_21_2(nodes, target=None):
     if nodes["j_21"].depth >= 0.25:
-        if (nodes['j_2'].depth <= 1.8):
+        if (nodes['j_2'].depth <= 0.5):
             target = 1
-        elif (nodes['j_21'].depth >= 1.4) & (nodes['j_2'].depth <= 2.3):
+        elif (nodes['j_21'].depth >= 0.8) & (nodes['j_2'].depth <= 2.3):
             target = 1
         else: 
             target = 0
@@ -28,9 +28,9 @@ def p_21_2(nodes, target=None):
 
 def p_20_2(nodes, target=None):
     if nodes["j_20"].depth >= 0.25:
-        if (nodes['j_2'].depth <= 1.8):
+        if (nodes['j_2'].depth <= 0.5):
             target = 1
-        elif (nodes['j_20'].depth >= 1.5):
+        elif (nodes['j_20'].depth >= 1.1):
             target = 1
         else: 
             target = 0
@@ -39,7 +39,7 @@ def p_20_2(nodes, target=None):
     return 'p_20_2', target
 
 def CSO_Pump_2(nodes, target=None):
-    if nodes["j_2"].depth >= 2.1:
+    if nodes["j_2"].depth >= 2.0:
         target = 1
     if nodes["j_2"].depth <= 1.5:
         target = 0    
@@ -47,9 +47,9 @@ def CSO_Pump_2(nodes, target=None):
 
 def p_2_1(nodes, target=None):
     if (nodes["j_2"].depth >= 0.25):
-        if (nodes['j_1'].depth <= 1):
+        if (nodes['j_1'].depth <= 0.5):
             target = 1
-        elif (nodes['j_2'].depth >= 2.3):
+        elif (nodes['j_2'].depth >= 1.1):
             target = 1
         else: 
             target = 0
@@ -69,7 +69,7 @@ def p10_1(nodes, target=None):
     if (nodes["j_10"].depth >= 0.25):
         if (nodes['j_1'].depth <= 0.5):
             target = 1
-        elif (nodes['j_10'].depth >= 2):
+        elif (nodes['j_10'].depth >= 1.8):
             target = 1
         else: 
             target = 0
