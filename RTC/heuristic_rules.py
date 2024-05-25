@@ -25,13 +25,26 @@ def p_21_2(nodes, target=None):
     if nodes["j_21"].depth >= 0.25:
         if (nodes['j_2'].depth <= 0.5):
             target = 1
-        elif (nodes['j_2'].depth >= 0.5) & (nodes['j_21'].depth >= 0.9):
+        elif (nodes['j_2'].depth >= 0.5) & (nodes['j_21'].depth >= 0.8):
             target = 1
         else: 
             target = 0
     if nodes["j_21"].depth <= 0.10:
         target = 0     
     return 'p_21_2', target
+
+def p_20_2(nodes, target=None):
+    if nodes["j_20"].depth >= 0.25:
+        if (nodes['j_2'].depth <= 0.5):
+            target = 1
+        elif (nodes['j_2'].depth >= 0.5) & (nodes['j_20'].depth >= 1.1):
+            target = 1
+        else: 
+            target = 0
+    if nodes["j_20"].depth <= 0.10:
+        target = 0     
+    return 'p_20_2', target
+    
     
 def WWTP_inlet(nodes, target=None):
     if nodes["j_1"].depth >= 0.25:

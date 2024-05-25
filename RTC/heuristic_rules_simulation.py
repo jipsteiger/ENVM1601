@@ -74,6 +74,7 @@ def simulate(start_month: int, start_day: int, end_month: int, end_day: int, nam
             links = assign_target(*rule.CSO_Pump_21(nodes), links)
             links = assign_target(*rule.p_2_1(nodes), links)
             links = assign_target(*rule.CSO_Pump_2(nodes), links)
+            links = assign_target(*rule.p_20_2(nodes), links)
 
 def assign_target(id: str, target: float, links):
     """Updates the specific pump target value, based on the pumps name (id),
