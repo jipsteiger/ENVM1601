@@ -4,6 +4,7 @@ import datetime as dt
 import pandas as pd
 import RTC.heuristic_rules as rule
 from typing import List
+import datetime as dt
 
 def main():
     csos = {
@@ -30,7 +31,18 @@ def main():
     
     print(f"Objective function end result: {som}")
     print(f"Objecttive function contribition per CSO:")
-    display(pd.DataFrame(csos, index=["CSO spill"])) # type: ignore
+    
+    now = dt.datetime.now()    
+    cso_result = pd.DataFrame(csos, index=[now.strftime('%d/%m %H:%M')])
+    sum_result = pd.DataFrame({'sum': som}, index=[now.strftime('%d/%m %H:%M')])
+    sim_result = pd.concat([cso_result, sum_result], axis=1)
+    
+    display(sim_result) # type: ignore
+    
+    results = pd.read_csv('RTC/results/sim_result.csv', index_col=0)
+    updated_results = pd.concat([results, sim_result])
+    updated_results.to_csv('RTC/results/sim_result.csv')
+
 
 
 def simulate(start_month: int, start_day: int, end_month: int, end_day: int, name: str = ''):
@@ -80,7 +92,7 @@ def assign_target(id: str, target: float, links):
         links[id].target_setting = target
     return links  
             
-def process_output(name: str, csos: dict, som: float) -> List[float, dict]:
+def process_output(name: str, csos: dict, som: float):
     """Reads the report file from the ran simulation. Calculates the objective function,
     updates total cso spillage, and prints relevant information.
 
