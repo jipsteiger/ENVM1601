@@ -23,6 +23,7 @@ def main():
                   [2, 8, 2, 12, "3 major events february"],
                   [2, 20, 2, 22, "Peak intensity event february"]]
     # parameters = [[6, 1, 7, 1, 'SWMM JUNE TEST']] #Test params
+    # parameters = [[1, 1, 12, 31, 'Full year sim']]
     som, cso_sum = 0, 0
     for params in parameters:
         simulate(*params)
@@ -38,10 +39,14 @@ def main():
     sim_result = pd.concat([cso_result, sum_result], axis=1)
     
     display(sim_result) # type: ignore
-    
-    results = pd.read_csv('RTC/results/sim_result.csv', index_col=0)
-    updated_results = pd.concat([results, sim_result])
-    updated_results.to_csv('RTC/results/sim_result.csv')
+    if parameters[-1][-1] == 'Full year sim':
+        results = pd.read_csv('RTC/results/full_sim_result.csv', index_col=0)
+        updated_results = pd.concat([results, sim_result])
+        updated_results.to_csv('RTC/results/full_sim_result.csv')
+    else:
+        results = pd.read_csv('RTC/results/sim_result.csv', index_col=0)
+        updated_results = pd.concat([results, sim_result])
+        updated_results.to_csv('RTC/results/sim_result.csv')
 
 
 
