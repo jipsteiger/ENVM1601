@@ -4,6 +4,7 @@ import datetime as dt
 import pandas as pd
 import RTC.heuristic_rules as rule
 from typing import List
+import datetime as dt
 
 def main():
     csos = {
@@ -22,15 +23,31 @@ def main():
                   [2, 8, 2, 12, "3 major events february"],
                   [2, 20, 2, 22, "Peak intensity event february"]]
     # parameters = [[6, 1, 7, 1, 'SWMM JUNE TEST']] #Test params
-    som = 0
+    # parameters = [[1, 1, 12, 31, 'Full year sim']]
+    som, cso_sum = 0, 0
     for params in parameters:
         simulate(*params)
-        som, csos = process_output(params[-1], csos, som)
+        som, csos, cso_sum = process_output(params[-1], csos, som, cso_sum)
         print('-----------------------------')
     
     print(f"Objective function end result: {som}")
     print(f"Objecttive function contribition per CSO:")
-    display(pd.DataFrame(csos, index=["CSO spill"])) # type: ignore
+    
+    now = dt.datetime.now()    
+    cso_result = pd.DataFrame(csos, index=[now.strftime('%d/%m %H:%M')])
+    sum_result = pd.DataFrame({'sum': som, 'spill_sum': cso_sum}, index=[now.strftime('%d/%m %H:%M')])
+    sim_result = pd.concat([cso_result, sum_result], axis=1)
+    
+    display(sim_result) # type: ignore
+    if parameters[-1][-1] == 'Full year sim':
+        results = pd.read_csv('RTC/results/full_sim_result.csv', index_col=0)
+        updated_results = pd.concat([results, sim_result])
+        updated_results.to_csv('RTC/results/full_sim_result.csv')
+    else:
+        results = pd.read_csv('RTC/results/sim_result.csv', index_col=0)
+        updated_results = pd.concat([results, sim_result])
+        updated_results.to_csv('RTC/results/sim_result.csv')
+
 
 
 def simulate(start_month: int, start_day: int, end_month: int, end_day: int, name: str = ''):
@@ -62,6 +79,7 @@ def simulate(start_month: int, start_day: int, end_month: int, end_day: int, nam
             links = assign_target(*rule.CSO_Pump_21(nodes), links)
             links = assign_target(*rule.p_2_1(nodes), links)
             links = assign_target(*rule.CSO_Pump_2(nodes), links)
+            links = assign_target(*rule.p_20_2(nodes), links)
 
 def assign_target(id: str, target: float, links):
     """Updates the specific pump target value, based on the pumps name (id),
@@ -80,7 +98,7 @@ def assign_target(id: str, target: float, links):
         links[id].target_setting = target
     return links  
             
-def process_output(name: str, csos: dict, som: float) -> List[float, dict]:
+def process_output(name: str, csos: dict, som: float, cso_sum: float):
     """Reads the report file from the ran simulation. Calculates the objective function,
     updates total cso spillage, and prints relevant information.
 
@@ -88,6 +106,7 @@ def process_output(name: str, csos: dict, som: float) -> List[float, dict]:
         name (str): Name of the event
         csos (dict): Spillage information per cso
         som (float): Sum of the objective function value
+        cso_sum (float): Sum of spillage
 
     Returns:
         List[float, dict]: Updated sum of objective function and update spillage per cso.
@@ -116,11 +135,12 @@ def process_output(name: str, csos: dict, som: float) -> List[float, dict]:
             som += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[i]  # No recreation
             csos[cso] += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[i]
         print(f'{cso} spilled: {output.loc[cso, "Total_Volume_10^6 ltr"]:.3f}')
+        cso_sum += output.loc[cso, "Total_Volume_10^6 ltr"]
     som += flooding["Flooding Loss"]["Volume_10^6 ltr"] * 10000  # Flooding addition
     print(f"Flooding loss is: {flooding['Flooding Loss']['Volume_10^6 ltr']:.3f}")
     print(f"Event objective function contribution: {som - initial_sum} ")  
     
-    return som, csos 
+    return som, csos, cso_sum 
 
 if __name__ == '__main__':
     main()

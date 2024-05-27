@@ -92,14 +92,14 @@ csos = {
     "cso_2b": 0,
 }
 
-rain1 = heuristic_sim(6, 11, 6, 16, "big rain event")  # Big rain event SUMMER MONTH
-rain2 = heuristic_sim(12, 10, 12, 20, "Little rain event")  # Little rain event
-rain3 = heuristic_sim(
-    9, 22, 9, 30, "Multiple rain alot of rain"
-)  # Multiple rain alot of rain
-rain4 = heuristic_sim(2, 8, 2, 12, "Much rain in 3 days")  # Much rain in 3 days
-rain5 = heuristic_sim(2, 20, 2, 22, "Peak rain intensity")  # Peak rain intensity
-sum_rain = rain1 + rain2 + rain3 + rain4 + rain5
+rain1 = heuristic_sim(1, 1, 12, 31, "big rain event")  # Big rain event SUMMER MONTH
+# rain2 = heuristic_sim(12, 10, 12, 20, "Little rain event")  # Little rain event
+# rain3 = heuristic_sim(
+#     9, 22, 9, 30, "Multiple rain alot of rain"
+# )  # Multiple rain alot of rain
+# rain4 = heuristic_sim(2, 8, 2, 12, "Much rain in 3 days")  # Much rain in 3 days
+# rain5 = heuristic_sim(2, 20, 2, 22, "Peak rain intensity")  # Peak rain intensity
+sum_rain = rain1
 print(f"Resuting Objective function value is {sum_rain}")
 print(f"Contribution per CSO:")
 pd.DataFrame(csos, index=["CSO spill"])
