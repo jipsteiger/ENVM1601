@@ -11,14 +11,14 @@ MIN_SLOPE            0
 ALLOW_PONDING        YES
 SKIP_STEADY_STATE    NO
 
-START_DATE           01/01/2020
+START_DATE           06/11/2020
 START_TIME           00:00:00
-REPORT_START_DATE    01/01/2020
+REPORT_START_DATE    06/11/2020
 REPORT_START_TIME    00:00:00
-END_DATE             01/01/2021
+END_DATE             06/16/2020
 END_TIME             00:00:00
-SWEEP_START          01/01
-SWEEP_END            12/31
+SWEEP_START          06/01
+SWEEP_END            06/30
 DRY_DAYS             0
 REPORT_STEP          00:15:00
 WET_STEP             00:00:15
@@ -47,8 +47,8 @@ DRY_ONLY         NO
 [RAINGAGES]
 ;;Name           Format    Interval SCF      Source    
 ;;-------------- --------- ------ ------ ----------
-R_01             VOLUME    0:05     1.0      TIMESERIES Rain_01         
-R_02             VOLUME    0:05     1.0      TIMESERIES Rain_02         
+R_01             VOLUME    0:05     1.0      TIMESERIES Rain_01        
+R_02             VOLUME    0:05     1.0      TIMESERIES Rain_02        
 
 [SUBCATCHMENTS]
 ;;Name           Rain Gage        Outlet           Area     %Imperv  Width    %Slope   CurbLen  SnowPack        
@@ -3137,9 +3137,9 @@ curve_20                    6.500000   6.332479
 [TIMESERIES]
 ;;Name           Date       Time       Value     
 ;;-------------- ---------- ---------- ----------
-Rain_01          FILE "rain01.dat"
+Rain_01          FILE "rain01_1.dat"
 ;
-Rain_02          FILE "rain02.dat"
+Rain_02          FILE "rain02_1.dat"
 
 
 [PATTERNS]

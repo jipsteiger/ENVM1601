@@ -1,8 +1,9 @@
 import pyswmm
 import pandas as pd
 import os 
-from pulp import *
+import pulp as pl
 import swmm_api 
+import numpy as np
 
 
 file = 'RTC/data/Dean Town_pyswmm.inp'
@@ -23,14 +24,14 @@ with pyswmm.Simulation(file) as sim:
         if nodes['j_1'].depth > 0.2 or nodes['j_20'].depth > 0.2: #only optimise during and after rain while system is full
             
             initial_filling = [nodes[k].volume for k in nodes]
-            prob = Lp.Problem('DeanTown', LpMinimize)
+            prob = pl.Problem('DeanTown', pl.LpMinimize)
             
             decision_indicices = [i for i in range(1, 10)]
             
-            x_vars = LpVariable.dicts('x', decision_indices, 0, None, LpContinuous)
+            x_vars = pl.LpVariable.dicts('x', decision_indicices, 0, None, pl.LpContinuous)
             
             #OBJECTIVE FUNCTION
-            prop += (x_vars * [1, 1, 1, 1, 1/500, 1, 1, 1,1 1/500]) 
+            prob += (x_vars * [1, 1, 1, 1, 1/500, 1, 1, 1,1 1/500]) 
             #Above is objective functions for different nodes
             #add equal filling degree(FD) somwhow for all i (FD_i -FD_mean)**2
             
@@ -45,13 +46,17 @@ with pyswmm.Simulation(file) as sim:
             
             #RESERVOIR VOLUMES
             #current volume + inflow - outflow cannot be more than the max volume
-            prob += (initial_filling[0] + j_1_r[number_of_steps_taken] - x_vars[1] - x_vars[2] - x_vars[3] + x_vars[4]) <= max_volume_in_j_1
+            prob += (initial_filling[0] + j_1_r[number_of_steps_taken] - x_vars[1] - x_vars[2] - \
+                x_vars[3] + x_vars[4]) <= max_volume_in_j_1
             #current volume + infows - outflows cannot be less than 0
-            prob += (initial_filling[0] + j_1_r[number_of_steps_taken] - x_vars[1] - x_vars[2] - x_vars[3] + x_vars[4]) >= max_volume_in_j_1
+            prob += (initial_filling[0] + j_1_r[number_of_steps_taken] - x_vars[1] - x_vars[2] - \
+                     x_vars[3] + x_vars[4]) >= max_volume_in_j_1
 
             # to look 2 steps ahead!: WHERE x_vars[7] and 8 and 9, is pumped CSO for 2nd timestep!
-            prob += (initial_filling[0] + j_1_r[number_of_steps_taken+1] - x_vars[1] - x_vars[2] - x_vars[3] + x_vars[4] + x_vars[7] + x_vars[8] + x_vars[9]) <= max_volume_in_j_1
-            prob += (initial_filling[0] + j_1_r[number_of_steps_taken+1] - x_vars[1] - x_vars[2] - x_vars[3] + x_vars[4] + x_vars[7] + x_vars[8] + x_vars[9]) >= max_volume_in_j_1
+            prob += (initial_filling[0] + j_1_r[number_of_steps_taken+1] - x_vars[1] - x_vars[2] - \
+                x_vars[3] + x_vars[4] + x_vars[7] + x_vars[8] + x_vars[9]) <= max_volume_in_j_1
+            prob += (initial_filling[0] + j_1_r[number_of_steps_taken+1] - x_vars[1] - x_vars[2] - \
+                x_vars[3] + x_vars[4] + x_vars[7] + x_vars[8] + x_vars[9]) >= max_volume_in_j_1
 
             prob.solve()
             

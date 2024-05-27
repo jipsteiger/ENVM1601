@@ -27,10 +27,11 @@ def main():
     ]
     # parameters = [[6, 1, 7, 1, 'SWMM JUNE TEST']] #Test params
     # parameters = [[1, 1, 12, 31, 'Full year sim']]
-    som, cso_sum = 0, 0
+    som, cso_sum, simulation = 0, 0, 1
     for params in parameters:
-        simulate(*params)
-        som, csos, cso_sum = process_output(params[-1], csos, som, cso_sum)
+        simulate(*params, simulation)
+        som, csos, cso_sum = process_output(params[-1], csos, som, cso_sum, simulation)
+        simulation += 1
         print("-----------------------------")
 
     print(f"Objective function end result: {som}")
@@ -55,7 +56,7 @@ def main():
 
 
 def simulate(
-    start_month: int, start_day: int, end_month: int, end_day: int, name: str = ""
+    start_month: int, start_day: int, end_month: int, end_day: int, name: str = "", simulation: int = 1
 ):
     """Runs the pyswmm simulation, between start month and day until end month and day.
     For each simulation step pump target is re-set to desired value.
@@ -66,9 +67,10 @@ def simulate(
         end_month (int)
         end_day (int)
         name (str, optional): Not used Defaults to ''.
+        simulation (int, optional): keeps track of different simulated events
     """
     with ps.Simulation(
-        r"RTC/data/Dean Town_pyswmm.inp",
+        fr"RTC\event_optimisation_input_data\Dean Town_pyswmm_{simulation}.inp",
     ) as sim:
         links = ps.Links(sim)
         nodes = ps.Nodes(sim)
@@ -106,7 +108,7 @@ def assign_target(id: str, target: float, links):
     return links
 
 
-def process_output(name: str, csos: dict, som: float, cso_sum: float):
+def process_output(name: str, csos: dict, som: float, cso_sum: float, simulation: int = 1):
     """Reads the report file from the ran simulation. Calculates the objective function,
     updates total cso spillage, and prints relevant information.
 
@@ -115,12 +117,13 @@ def process_output(name: str, csos: dict, som: float, cso_sum: float):
         csos (dict): Spillage information per cso
         som (float): Sum of the objective function value
         cso_sum (float): Sum of spillage
+        simulation (int, optional): keeps track of different simulated events
 
     Returns:
         List[float, dict]: Updated sum of objective function and update spillage per cso.
     """
 
-    rpt = sa.read_rpt_file(r"RTC\data\Dean Town_pyswmm.rpt")
+    rpt = sa.read_rpt_file(fr"RTC\event_optimisation_input_data\Dean Town_pyswmm_{simulation}.rpt")
     output = rpt.outfall_loading_summary
     output = output.drop(["Wastewater_Treatment_Plant"], axis=0)
     flooding = rpt.flow_routing_continuity
