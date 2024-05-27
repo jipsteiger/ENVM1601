@@ -10,7 +10,7 @@ def CSO_Pump_21(nodes, target=None):
     """
     if nodes["j_21"].depth >= 1.4:
         target = 1
-    if (nodes["j_21"].depth >= 0.8) & (nodes["j_2"].depth >= 1.5):
+    if (nodes["j_21"].depth >= 0.8) & (nodes["j_2"].depth >= 1.5):  # NOT NECCESARYY!?
         target = 1
     if nodes["j_21"].depth <= 0.7:
         target = 0
@@ -47,7 +47,9 @@ def p_20_2(nodes, target=None):
 def CSO_Pump_2(nodes, target=None):
     if nodes["j_2"].depth >= 2.1:
         target = 1
-    if (nodes["j_20"].depth >= 1.9) or (nodes["j_21"].depth >= 1):
+    if (nodes["j_20"].depth >= 1.9) or (
+        nodes["j_21"].depth >= 1
+    ):  # Rather prioritise p_2_1
         target = 1
     if nodes["j_2"].depth <= 1.5:
         target = 0
