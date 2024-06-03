@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 3  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 8  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -40,7 +40,7 @@ CSO_CREST_HEIGHT = [1.83, 2.21, 2.48, 1.90, 2.16]  # Crest height of all weirs
 
 junctions = ["j_1", "j_10", "j_2", "j_20", "j_21"]
 
-EQUAL_FILLING_WEIGHT = 1
+EQUAL_FILLING_WEIGHT = 0.0000001
 
 JUNCTION_MAX_STORAGE = {}
 
@@ -237,12 +237,21 @@ for file_number in range(1, 5 + 1):
                 storage_mean_depth = storage_total_depth / len(junctions)      
                           
                 # Calculate equal filling degree to objective function, based on filling degree per junction
-                for junction in junctions:
-                    equal_fill_obj += (
-                        EQUAL_FILLING_WEIGHT * (storage_depth[junction] / storage_mean_depth) ** 2
-                    )
-                
-                # Set FUNCTION OBJECTIVE
+                # THIS SECTION IS PARTLY PROVIDED BY CHATGPT DUE TO JANKY ABSOLUTES 
+                abs_diff = {}
+                equal_fill_obj = pl.LpVariable("equal_fill_obj", lowBound=0)
+                for junction in storage_depth:
+                    # Create a new variable for the absolute difference
+                    abs_diff[junction] = pl.LpVariable(f"abs_diff_{junction}", lowBound=0)
+                    
+                    # Add constraints for the absolute difference
+                    prob += abs_diff[junction] >= (storage_depth[junction] - storage_mean_depth)
+                    prob += abs_diff[junction] >= -(storage_depth[junction] - storage_mean_depth)
+                    
+                    # Add the weighted absolute difference to the objective
+                    equal_fill_obj += EQUAL_FILLING_WEIGHT * abs_diff[junction]
+                    
+                #Set FUNCTION OBJECTIVE
 
                 prob += spill_obj + equal_fill_obj
 
@@ -325,8 +334,8 @@ for file_number in range(1, 5 + 1):
         updated_results = pd.concat([results, sim_result])
         updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
     else:
-        # results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
-        # updated_results = pd.concat([results, sim_result])
+        results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
+        updated_results = pd.concat([results, sim_result])
         sim_result.to_csv("RTC/results/event_optimisation_full_result.csv")
 print("DONE!")
 
