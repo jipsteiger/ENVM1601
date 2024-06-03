@@ -56,7 +56,12 @@ def main():
 
 
 def simulate(
-    start_month: int, start_day: int, end_month: int, end_day: int, name: str = "", simulation: int = 1
+    start_month: int,
+    start_day: int,
+    end_month: int,
+    end_day: int,
+    name: str = "",
+    simulation: int = 1,
 ):
     """Runs the pyswmm simulation, between start month and day until end month and day.
     For each simulation step pump target is re-set to desired value.
@@ -70,7 +75,7 @@ def simulate(
         simulation (int, optional): keeps track of different simulated events
     """
     with ps.Simulation(
-        fr"RTC\event_optimisation_input_data\Dean Town_pyswmm_{simulation}.inp",
+        rf"RTC\event_optimisation_input_data\Dean Town_pyswmm_{simulation}.inp",
     ) as sim:
         links = ps.Links(sim)
         nodes = ps.Nodes(sim)
@@ -108,7 +113,9 @@ def assign_target(id: str, target: float, links):
     return links
 
 
-def process_output(name: str, csos: dict, som: float, cso_sum: float, simulation: int = 1):
+def process_output(
+    name: str, csos: dict, som: float, cso_sum: float, simulation: int = 1
+):
     """Reads the report file from the ran simulation. Calculates the objective function,
     updates total cso spillage, and prints relevant information.
 
@@ -123,7 +130,9 @@ def process_output(name: str, csos: dict, som: float, cso_sum: float, simulation
         List[float, dict]: Updated sum of objective function and update spillage per cso.
     """
 
-    rpt = sa.read_rpt_file(fr"RTC\event_optimisation_input_data\Dean Town_pyswmm_{simulation}.rpt")
+    rpt = sa.read_rpt_file(
+        rf"RTC\event_optimisation_input_data\Dean Town_pyswmm_{simulation}.rpt"
+    )
     output = rpt.outfall_loading_summary
     output = output.drop(["Wastewater_Treatment_Plant"], axis=0)
     flooding = rpt.flow_routing_continuity
