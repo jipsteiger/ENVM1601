@@ -40,7 +40,7 @@ CSO_CREST_HEIGHT = [1.83, 2.21, 2.48, 1.90, 2.16]  # Crest height of all weirs
 
 junctions = ["j_1", "j_10", "j_2", "j_20", "j_21"]
 
-EQUAL_FILLING_WEIGHT = 0.0000001
+EQUAL_FILLING_WEIGHT = 1
 
 JUNCTION_MAX_STORAGE = {}
 
@@ -99,7 +99,12 @@ for file_number in range(1, 5 + 1):
 
                 x_vars = pl.LpVariable.dicts("x", decision_indices, 0, None, pl.LpContinuous)  # type: ignore
 
-               
+                # Add equal filling degree to objective function, based on depth
+                # mean_depth = np.sum([nodes[j].depth for j in junctions]) / 5
+                # for junction in junctions:
+                #     equal_fill_obj += (
+                #         EQUAL_FILLING_WEIGHT * (nodes[junction].depth / mean_depth) ** 2
+                #     )
 
                 # Add boundaries for each timestep
                 for i in range(0, NUMBER_OF_TIME_STEPS):
@@ -158,13 +163,13 @@ for file_number in range(1, 5 + 1):
                     reservoir_delta_j_20 += -x_vars[4 + 12 * i] - x_vars[10 + 12 * i]
                     reservoir_delta_j_21 += -x_vars[5 + 12 * i] - x_vars[7 + 12 * i]
 
-                
+                # Set FUNCTION OBJECTIVE
+                prob += spill_obj  # + equal_fill_obj
 
-                # CALCULATE RESERVOIR VOLUMES
+                # RESERVOIR VOLUMES
                 # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
                 # cannot be more than the max storage volume in node
-                junction_filled_volume = {}
-                junction_filled_volume['j_1'] = (
+                prob += (
                     initial_filling[0]
                     + time_step_size
                     * (
@@ -176,8 +181,8 @@ for file_number in range(1, 5 + 1):
                         )
                         + reservoir_delta_j_1
                     )
-                )
-                junction_filled_volume['j_10'] = (
+                ) <= JUNCTION_MAX_STORAGE["j_1"]
+                prob += (
                     initial_filling[1]
                     + time_step_size
                     * np.sum(
@@ -187,8 +192,8 @@ for file_number in range(1, 5 + 1):
                         ]
                         + reservoir_delta_j_10
                     )
-                )
-                junction_filled_volume['j_2'] = (
+                ) <= JUNCTION_MAX_STORAGE["j_10"]
+                prob += (
                     initial_filling[2]
                     + time_step_size
                     * np.sum(
@@ -198,9 +203,8 @@ for file_number in range(1, 5 + 1):
                         ]
                         + reservoir_delta_j_2
                     )
-                )
-                
-                junction_filled_volume['j_20'] = (
+                ) <= JUNCTION_MAX_STORAGE["j_2"]
+                prob += (
                     initial_filling[3]
                     + time_step_size
                     * np.sum(
@@ -210,79 +214,125 @@ for file_number in range(1, 5 + 1):
                         ]
                         + reservoir_delta_j_20
                     )
-                )
-                
-                junction_filled_volume['j_21'] = (
+                ) <= JUNCTION_MAX_STORAGE["j_20"]
+                prob += (
                     initial_filling[4]
                     + time_step_size
                     * np.sum(
                         j21_in[
-                            number_of_steps_taken : number_of_steps_taken*
+                            number_of_steps_taken : number_of_steps_taken
                             + NUMBER_OF_TIME_STEPS
                         ]
                         + reservoir_delta_j_21
                     )
-                )
-                
-                # SET RESERVOIR BOUNDARY CONDITIONS ALSO MINIMUM ZERO, AND CALC. FILLING DEGREE
-                storage_depth = {}
-                storage_total_depth = 0
-                for junction in junctions:
-                    prob += junction_filled_volume[junction] <= JUNCTION_MAX_STORAGE[junction]
-                    prob += junction_filled_volume[junction] <= 0
-                                
-                    storage_depth[junction] = junction_filled_volume[junction] / JUNCTION_MAX_STORAGE[junction]
-                    storage_total_depth += junction_filled_volume[junction] / JUNCTION_MAX_STORAGE[junction]
-                    
-                storage_mean_depth = storage_total_depth / len(junctions)      
-                          
-                # Calculate equal filling degree to objective function, based on filling degree per junction
-                # THIS SECTION IS PARTLY PROVIDED BY CHATGPT DUE TO JANKY ABSOLUTES 
-                abs_diff = {}
-                equal_fill_obj = pl.LpVariable("equal_fill_obj", lowBound=0)
-                for junction in storage_depth:
-                    # Create a new variable for the absolute difference
-                    abs_diff[junction] = pl.LpVariable(f"abs_diff_{junction}", lowBound=0)
-                    
-                    # Add constraints for the absolute difference
-                    prob += abs_diff[junction] >= (storage_depth[junction] - storage_mean_depth)
-                    prob += abs_diff[junction] >= -(storage_depth[junction] - storage_mean_depth)
-                    
-                    # Add the weighted absolute difference to the objective
-                    equal_fill_obj += EQUAL_FILLING_WEIGHT * abs_diff[junction]
-                    
-                #Set FUNCTION OBJECTIVE
+                ) <= JUNCTION_MAX_STORAGE["j_21"]
 
-                prob += spill_obj + equal_fill_obj
+                # ALSO MINIMUM ZERO
+                prob += (
+                    initial_filling[0]
+                    + time_step_size
+                    * (
+                        np.sum(
+                            j1_in[
+                                number_of_steps_taken : number_of_steps_taken
+                                + NUMBER_OF_TIME_STEPS
+                            ]
+                        )
+                        + reservoir_delta_j_1
+                    )
+                ) <= 0
+                prob += (
+                    initial_filling[1]
+                    + time_step_size
+                    * np.sum(
+                        j10_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + NUMBER_OF_TIME_STEPS
+                        ]
+                        + reservoir_delta_j_10
+                    )
+                ) <= 0
+                prob += (
+                    initial_filling[2]
+                    + time_step_size
+                    * np.sum(
+                        j2_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + NUMBER_OF_TIME_STEPS
+                        ]
+                        + reservoir_delta_j_2
+                    )
+                ) <= 0
+                prob += (
+                    initial_filling[3]
+                    + time_step_size
+                    * np.sum(
+                        j20_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + NUMBER_OF_TIME_STEPS
+                        ]
+                        + reservoir_delta_j_20
+                    )
+                ) <= 0
+                prob += (
+                    initial_filling[4]
+                    + time_step_size
+                    * np.sum(
+                        j21_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + NUMBER_OF_TIME_STEPS
+                        ]
+                        + reservoir_delta_j_21
+                    )
+                ) <= 0
 
                 prob.solve()
 
-                #Create list of weirdly ordered problem variables to index can be found
-                var_list = [str(prob.variables()[p]) for p in range(len(prob.variables()))]
-                
                 # Update pump controls
-                links["CSO_Pump_2"].target_setting = (
-                    prob.variables()[var_list.index('x_6')].varValue / CSO_PUMP_2_MAX
-                )
-                links["CSO_Pump_21"].target_setting = (
-                    prob.variables()[var_list.index('x_7')].varValue / CSO_PUMP_21_MAX
-                )
-                links["p10_1"].target_setting = (
-                    prob.variables()[var_list.index('x_8')].varValue / P_10_1_MAX
-                )
-                links["p_2_1"].target_setting = (
-                    prob.variables()[var_list.index('x_9')].varValue / P_2_1_MAX
-                )
-                links["p_20_2"].target_setting = (
-                    prob.variables()[var_list.index('x_10')].varValue / P_20_2_MAX
-                )
-                links["p_21_2"].target_setting = (
-                    prob.variables()[var_list.index('x_11')].varValue / P_21_2_MAX
-                )
-                links["WWTP_inlet"].target_setting = (
-                    prob.variables()[var_list.index('x_12')].varValue / WWTP_INLET_MAX
-                )
-              
+                if NUMBER_OF_TIME_STEPS == 3:
+                    links["CSO_Pump_2"].target_setting = (
+                        prob.variables()[32].varValue / CSO_PUMP_2_MAX
+                    )
+                    links["CSO_Pump_21"].target_setting = (
+                        prob.variables()[33].varValue / CSO_PUMP_21_MAX
+                    )
+                    links["p10_1"].target_setting = (
+                        prob.variables()[34].varValue / P_10_1_MAX
+                    )
+                    links["p_2_1"].target_setting = (
+                        prob.variables()[35].varValue / P_2_1_MAX
+                    )
+                    links["p_20_2"].target_setting = (
+                        prob.variables()[1].varValue / P_20_2_MAX
+                    )
+                    links["p_21_2"].target_setting = (
+                        prob.variables()[2].varValue / P_21_2_MAX
+                    )
+                    links["WWTP_inlet"].target_setting = (
+                        prob.variables()[3].varValue / WWTP_INLET_MAX
+                    )
+                if NUMBER_OF_TIME_STEPS == 1:
+                    links["CSO_Pump_2"].target_setting = (
+                        prob.variables()[8].varValue / CSO_PUMP_2_MAX
+                    )
+                    links["CSO_Pump_21"].target_setting = (
+                        prob.variables()[9].varValue / CSO_PUMP_21_MAX
+                    )
+                    links["p10_1"].target_setting = (
+                        prob.variables()[10].varValue / P_10_1_MAX
+                    )
+                    links["p_2_1"].target_setting = (
+                        prob.variables()[11].varValue / P_2_1_MAX
+                    )
+                    links["p_20_2"].target_setting = (
+                        prob.variables()[1].varValue / P_20_2_MAX
+                    )
+                    links["p_21_2"].target_setting = (
+                        prob.variables()[2].varValue / P_21_2_MAX
+                    )
+                    links["WWTP_inlet"].target_setting = (
+                        prob.variables()[3].varValue / WWTP_INLET_MAX
+                    )
 
     # ----------------------------------------------------------------------------------
     # Process output
@@ -334,8 +384,8 @@ for file_number in range(1, 5 + 1):
         updated_results = pd.concat([results, sim_result])
         updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
     else:
-        results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
-        updated_results = pd.concat([results, sim_result])
+        # results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
+        # updated_results = pd.concat([results, sim_result])
         sim_result.to_csv("RTC/results/event_optimisation_full_result.csv")
 print("DONE!")
 
