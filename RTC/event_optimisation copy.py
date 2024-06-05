@@ -1,14 +1,14 @@
-import pyswmm
-import pandas as pd
+import pyswmm  # type: ignore
+import pandas as pd  # type: ignore
 import os
-import pulp as pl
-import swmm_api as sa
+import pulp as pl  # type: ignore
+import swmm_api as sa  # type: ignore
 import numpy as np
 from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 3  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 8  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -40,12 +40,14 @@ CSO_CREST_HEIGHT = [1.83, 2.21, 2.48, 1.90, 2.16]  # Crest height of all weirs
 
 junctions = ["j_1", "j_10", "j_2", "j_20", "j_21"]
 
-EQUAL_FILLING_WEIGHT = 0.0000001
+EQUAL_FILLING_WEIGHT = 10
 
 JUNCTION_MAX_STORAGE = {}
 
 som = 0
 cso_sum = 0
+
+to_plot_value = [[], [], [], [], []]
 
 # Calculate max storage in node based on weir crest height by using the storage curve
 for i, junction in enumerate(junctions):
@@ -62,14 +64,14 @@ for i, junction in enumerate(junctions):
     JUNCTION_MAX_STORAGE[junction] = max_storage
 
 for file_number in range(1, 5 + 1):
-    output = sa.read_out_file(
+    output_inflow = sa.read_out_file(
         rf"RTC\event_optimisation_output_data\Dean Town_pyswmm_{file_number}.out"
     ).to_frame()
-    j1_in = output["node"]["j_1"]["lateral_inflow"]
-    j10_in = output["node"]["j_10"]["lateral_inflow"]
-    j2_in = output["node"]["j_2"]["lateral_inflow"]
-    j20_in = output["node"]["j_20"]["lateral_inflow"]
-    j21_in = output["node"]["j_21"]["lateral_inflow"]
+    j1_in = output_inflow["node"]["j_1"]["lateral_inflow"] * 1000
+    j10_in = output_inflow["node"]["j_10"]["lateral_inflow"] * 1000
+    j2_in = output_inflow["node"]["j_2"]["lateral_inflow"] * 1000
+    j20_in = output_inflow["node"]["j_20"]["lateral_inflow"] * 1000
+    j21_in = output_inflow["node"]["j_21"]["lateral_inflow"] * 1000
 
     with pyswmm.Simulation(
         f"RTC\event_optimisation_input_data\Dean Town_pyswmm_{file_number}.inp"
@@ -154,7 +156,9 @@ for file_number in range(1, 5 + 1):
                         - x_vars[9 + 12 * i]
                     )
                     reservoir_delta_j_20 += -x_vars[4 + 12 * i] - x_vars[10 + 12 * i]
-                    reservoir_delta_j_21 += -x_vars[5 + 12 * i] - x_vars[7 + 12 * i]
+                    reservoir_delta_j_21 += (
+                        -x_vars[5 + 12 * i] - x_vars[7 + 12 * i] - x_vars[11 + 12 * i]
+                    )
 
                 # CALCULATE RESERVOIR VOLUMES
                 # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
@@ -252,7 +256,7 @@ for file_number in range(1, 5 + 1):
 
                 # Set FUNCTION OBJECTIVE
 
-                prob += spill_obj + equal_fill_obj
+                prob += spill_obj  # + equal_fill_obj
 
                 prob.solve()
 
@@ -299,17 +303,17 @@ for file_number in range(1, 5 + 1):
     summer = [2, 2, 2, 2, 2, 1 / 500, 1 / 500]
     winter = [1, 1, 1, 1, 2, 1 / 500, 1 / 500]
 
-    for i, cso in enumerate(
+    for k, cso in enumerate(
         ["cso_1", "cso_20", "cso_2a", "cso_21a", "cso_10", "cso_21b", "cso_2b"]
     ):
         if EVENT_NAME[file_number - 1] == "Major event june":
             som += (
-                output.loc[cso, "Total_Volume_10^6 ltr"] * summer[i]
+                output.loc[cso, "Total_Volume_10^6 ltr"] * summer[k]
             )  # For goss river recrreation
-            CSOS[cso] += output.loc[cso, "Total_Volume_10^6 ltr"] * summer[i]
+            CSOS[cso] += output.loc[cso, "Total_Volume_10^6 ltr"] * summer[k]
         else:
-            som += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[i]  # No recreation
-            CSOS[cso] += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[i]
+            som += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[k]  # No recreation
+            CSOS[cso] += output.loc[cso, "Total_Volume_10^6 ltr"] * winter[k]
         print(f'{cso} spilled: {output.loc[cso, "Total_Volume_10^6 ltr"]:.3f}')
         cso_sum += output.loc[cso, "Total_Volume_10^6 ltr"]
     som += flooding["Flooding Loss"]["Volume_10^6 ltr"] * 10000  # Flooding addition
@@ -338,7 +342,7 @@ for file_number in range(1, 5 + 1):
             "RTC/results/event_optimisation_full_result.csv", index_col=0
         )
         updated_results = pd.concat([results, sim_result])
-        sim_result.to_csv("RTC/results/event_optimisation_full_result.csv")
+        updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
 print("DONE!")
 
 
