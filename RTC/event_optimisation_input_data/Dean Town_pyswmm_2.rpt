@@ -51,19 +51,19 @@
   Groundwater Inflow .......         0.000         0.000
   RDII Inflow ..............         0.000         0.000
   External Inflow ..........         0.000         0.000
-  External Outflow .........         7.227        72.272
+  External Outflow .........         7.216        72.158
   Flooding Loss ............         0.000         0.000
   Evaporation Loss .........         0.000         0.000
   Exfiltration Loss ........         0.000         0.000
   Initial Stored Volume ....         0.000         0.000
-  Final Stored Volume ......         0.125         1.252
-  Continuity Error (%) .....        -1.185
+  Final Stored Volume ......         0.138         1.377
+  Continuity Error (%) .....        -1.201
   
   
   *************************
   Highest Continuity Errors
   *************************
-  Node j_1 (-2.25%)
+  Node j_1 (-2.26%)
   
   
   ***************************
@@ -76,7 +76,7 @@
   Highest Flow Instability Indexes
   ********************************
   Link CSO_Pump_2 (123)
-  Link p_2_1 (91)
+  Link p_2_1 (90)
   Link WWTP_inlet (68)
   Link p10_1 (1)
   
@@ -94,8 +94,8 @@
   Average Time Step           :     7.96 sec
   Maximum Time Step           :     8.00 sec
   % of Time in Steady State   :     0.00
-  Average Iterations per Step :    13.47
-  % of Steps Not Converging   :    74.79
+  Average Iterations per Step :    13.41
+  % of Steps Not Converging   :    74.45
   Time Step Frequencies       :
       8.000 -  2.899 sec      :   100.00 %
       2.899 -  1.051 sec      :     0.00 %
@@ -166,13 +166,13 @@
   cso_2a               OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
   cso_21a              OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
   cso_10               OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
-  Wastewater_Treatment_Plant OUTFALL      0.000    0.528     4  20:35           0        41.9       0.000
-  cso_21b              OUTFALL      0.000    0.028     1  14:09           0        1.89       0.000
+  Wastewater_Treatment_Plant OUTFALL      0.000    0.528     4  20:35           0        41.8       0.000
+  cso_21b              OUTFALL      0.000    0.028     1  14:09           0        1.88       0.000
   cso_2b               OUTFALL      0.000    0.516     2  19:25           0        26.9       0.000
-  j_1                  STORAGE      1.301    1.907     4  19:25          16          41      -2.199
-  j_21                 STORAGE      0.203    0.203     4  07:30         3.6         3.6       0.391
+  j_1                  STORAGE      1.301    1.907     4  19:25          16        40.9      -2.206
+  j_21                 STORAGE      0.203    0.203     4  07:30         3.6         3.6       0.392
   j_10                 STORAGE      1.144    1.144     4  19:25        10.2        10.2       0.880
-  j_2                  STORAGE      2.456    2.481     4  07:30        35.4        41.7      -0.118
+  j_2                  STORAGE      2.456    2.481     4  07:30        35.4        41.7      -0.144
   j_20                 STORAGE      0.307    0.307     4  07:30        7.46        7.46       0.089
   
   
@@ -220,11 +220,11 @@
   cso_2a                 0.00     0.000     0.000       0.000
   cso_21a                0.00     0.000     0.000       0.000
   cso_10                 0.00     0.000     0.000       0.000
-  Wastewater_Treatment_Plant  99.86     0.049     0.528      41.883
-  cso_21b               99.27     0.002     0.028       1.886
-  cso_2b                65.63     0.047     0.516      26.914
+  Wastewater_Treatment_Plant  99.76     0.049     0.528      41.808
+  cso_21b               97.50     0.002     0.028       1.883
+  cso_2b                65.62     0.047     0.516      26.879
   -----------------------------------------------------------
-  System                34.44     0.115     0.977      72.271
+  System                34.20     0.115     0.977      72.158
   
   
   ********************
@@ -277,15 +277,15 @@
                         Percent   Number of      Flow      Flow      Flow    Volume     Usage    Pump Curve
   Pump                 Utilized   Start-Ups       CMS       CMS       CMS  10^6 ltr     Kw-hr    Low   High
   ---------------------------------------------------------------------------------------------------------
-  p_20_2                  51.46          10      0.00      0.01      0.01     4.644     26.74    0.0   53.4
-  WWTP_inlet              99.86          37      0.00      0.05      0.53    41.883     36.55    0.0    0.0
-  p_21_2                  99.48           3      0.00      0.00      0.03     1.698      9.60    0.0    0.0
-  CSO_Pump_21             99.27           1      0.00      0.00      0.03     1.886      4.94    0.0    0.0
+  p_20_2                  51.46          10      0.00      0.01      0.01     4.644     26.48    0.0   53.4
+  WWTP_inlet              99.76          38      0.00      0.05      0.53    41.808     36.54    0.0    0.0
+  p_21_2                  99.79           1      0.00      0.00      0.03     1.701      9.61    0.0    0.0
+  CSO_Pump_21             97.50           1      0.00      0.00      0.03     1.883      4.93    0.0    0.0
   p10_1                   35.17          48      0.00      0.03      0.27    10.084     26.47    0.0    0.0
-  p_2_1                   33.39       32015      0.00      0.05      0.35    14.873     50.81    0.0    0.0
-  CSO_Pump_2              65.63       32079      0.00      0.05      0.52    26.916     77.10    0.0    0.0
+  p_2_1                   32.75       31923      0.00      0.05      0.35    14.783     50.52    0.0    0.0
+  CSO_Pump_2              65.62       31974      0.00      0.05      0.52    26.882     77.05    0.0    0.0
   
 
-  Analysis begun on:  Wed Jun  5 17:07:54 2024
-  Analysis ended on:  Wed Jun  5 17:09:41 2024
-  Total elapsed time: 00:01:47
+  Analysis begun on:  Wed Jun  5 17:13:11 2024
+  Analysis ended on:  Wed Jun  5 17:14:56 2024
+  Total elapsed time: 00:01:45
