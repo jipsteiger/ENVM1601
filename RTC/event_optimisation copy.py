@@ -256,7 +256,7 @@ for file_number in range(1, 5 + 1):
 
                 # Set FUNCTION OBJECTIVE
 
-                prob += spill_obj  # + equal_fill_obj
+                prob += spill_obj + equal_fill_obj
 
                 prob.solve()
 
@@ -331,18 +331,14 @@ for file_number in range(1, 5 + 1):
     sim_result = pd.concat([cso_result, sum_result], axis=1)
 
     display(sim_result)  # type: ignore
-    if EVENT_NAME[-1] == "Full year sim":
-        results = pd.read_csv(
-            "RTC/results/event_optimisation_full_result.csv", index_col=0
-        )
-        updated_results = pd.concat([results, sim_result])
-        updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
-    else:
-        results = pd.read_csv(
-            "RTC/results/event_optimisation_full_result.csv", index_col=0
-        )
-        updated_results = pd.concat([results, sim_result])
-        updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
+if EVENT_NAME[-1] == "Full year sim":
+    results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
+    updated_results = pd.concat([results, sim_result])
+    updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
+else:
+    results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
+    updated_results = pd.concat([results, sim_result])
+    updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
 print("DONE!")
 
 
