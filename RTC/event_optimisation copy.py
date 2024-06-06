@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 8  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 9  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -160,6 +160,10 @@ for file_number in range(1, 5 + 1):
                         -x_vars[5 + 12 * i] - x_vars[7 + 12 * i] - x_vars[11 + 12 * i]
                     )
 
+                # TODO: junction filled volume has to be used in the i loop, has to be calculated for each time step.
+                # If that doesnt work, add to the the function objective something that penalises volume in all nodes
+                # except for j_1. And promotes usage of pumping to j_1.
+
                 # CALCULATE RESERVOIR VOLUMES
                 # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
                 # cannot be more than the max storage volume in node
@@ -230,6 +234,8 @@ for file_number in range(1, 5 + 1):
                         junction_filled_volume[junction]
                         / JUNCTION_MAX_STORAGE[junction]
                     )
+
+                # TODO: Add all above to the i loop.
 
                 storage_mean_depth = storage_total_depth / len(junctions)
 
