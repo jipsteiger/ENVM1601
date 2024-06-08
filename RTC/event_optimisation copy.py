@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 9  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 3  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -46,8 +46,6 @@ JUNCTION_MAX_STORAGE = {}
 
 som = 0
 cso_sum = 0
-
-to_plot_value = [[], [], [], [], []]
 
 # Calculate max storage in node based on weir crest height by using the storage curve
 for i, junction in enumerate(junctions):
@@ -147,7 +145,9 @@ for file_number in range(1, 5 + 1):
                         - x_vars[1 + 12 * i]
                         - x_vars[12 + 12 * i]
                     )
+
                     reservoir_delta_j_10 += -x_vars[2 + 12 * i] - x_vars[8 + 12 * i]
+
                     reservoir_delta_j_2 += (
                         x_vars[10 + 12 * i]
                         + x_vars[11 + 12 * i]
@@ -155,85 +155,87 @@ for file_number in range(1, 5 + 1):
                         - x_vars[6 + 12 * i]
                         - x_vars[9 + 12 * i]
                     )
+
                     reservoir_delta_j_20 += -x_vars[4 + 12 * i] - x_vars[10 + 12 * i]
+
                     reservoir_delta_j_21 += (
                         -x_vars[5 + 12 * i] - x_vars[7 + 12 * i] - x_vars[11 + 12 * i]
                     )
 
-                # TODO: junction filled volume has to be used in the i loop, has to be calculated for each time step.
-                # If that doesnt work, add to the the function objective something that penalises volume in all nodes
-                # except for j_1. And promotes usage of pumping to j_1.
+                    # TODO: junction filled volume has to be used in the i loop, has to be calculated for each time step.
+                    # If that doesnt work, add to the the function objective something that penalises volume in all nodes
+                    # except for j_1. And promotes usage of pumping to j_1.
 
-                # CALCULATE RESERVOIR VOLUMES
-                # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
-                # cannot be more than the max storage volume in node
-                junction_filled_volume = {}
-                junction_filled_volume["j_1"] = initial_filling[0] + time_step_size * (
-                    np.sum(
-                        j1_in[
+                    # CALCULATE RESERVOIR VOLUMES
+                    # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
+                    # cannot be more than the max storage volume in node
+                    junction_filled_volume = {}
+                    junction_filled_volume["j_1"] = initial_filling[0] + time_step_size * (
+                        np.sum(
+                            j1_in[
+                                number_of_steps_taken : number_of_steps_taken
+                                + (i + 1)
+                            ]
+                        )
+                        + reservoir_delta_j_1
+                    )
+                    junction_filled_volume["j_10"] = initial_filling[
+                        1
+                    ] + time_step_size * np.sum(
+                        j10_in[
                             number_of_steps_taken : number_of_steps_taken
-                            + NUMBER_OF_TIME_STEPS
+                            + (i + 1)
                         ]
+                        + reservoir_delta_j_10
                     )
-                    + reservoir_delta_j_1
-                )
-                junction_filled_volume["j_10"] = initial_filling[
-                    1
-                ] + time_step_size * np.sum(
-                    j10_in[
-                        number_of_steps_taken : number_of_steps_taken
-                        + NUMBER_OF_TIME_STEPS
-                    ]
-                    + reservoir_delta_j_10
-                )
-                junction_filled_volume["j_2"] = initial_filling[
-                    2
-                ] + time_step_size * np.sum(
-                    j2_in[
-                        number_of_steps_taken : number_of_steps_taken
-                        + NUMBER_OF_TIME_STEPS
-                    ]
-                    + reservoir_delta_j_2
-                )
-
-                junction_filled_volume["j_20"] = initial_filling[
-                    3
-                ] + time_step_size * np.sum(
-                    j20_in[
-                        number_of_steps_taken : number_of_steps_taken
-                        + NUMBER_OF_TIME_STEPS
-                    ]
-                    + reservoir_delta_j_20
-                )
-
-                junction_filled_volume["j_21"] = initial_filling[
-                    4
-                ] + time_step_size * np.sum(
-                    j21_in[
-                        number_of_steps_taken : number_of_steps_taken
-                        * +NUMBER_OF_TIME_STEPS
-                    ]
-                    + reservoir_delta_j_21
-                )
-
-                # SET RESERVOIR BOUNDARY CONDITIONS ALSO MINIMUM ZERO, AND CALC. FILLING DEGREE
-                storage_depth = {}
-                storage_total_depth = 0
-                for junction in junctions:
-                    prob += (
-                        junction_filled_volume[junction]
-                        <= JUNCTION_MAX_STORAGE[junction]
+                    junction_filled_volume["j_2"] = initial_filling[
+                        2
+                    ] + time_step_size * np.sum(
+                        j2_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + (i + 1)
+                        ]
+                        + reservoir_delta_j_2
                     )
-                    prob += junction_filled_volume[junction] >= 0
 
-                    storage_depth[junction] = (
-                        junction_filled_volume[junction]
-                        / JUNCTION_MAX_STORAGE[junction]
+                    junction_filled_volume["j_20"] = initial_filling[
+                        3
+                    ] + time_step_size * np.sum(
+                        j20_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + (i + 1)
+                        ]
+                        + reservoir_delta_j_20
                     )
-                    storage_total_depth += (
-                        junction_filled_volume[junction]
-                        / JUNCTION_MAX_STORAGE[junction]
+
+                    junction_filled_volume["j_21"] = initial_filling[
+                        4
+                    ] + time_step_size * np.sum(
+                        j21_in[
+                            number_of_steps_taken : number_of_steps_taken
+                            + (i + 1)
+                        ]
+                        + reservoir_delta_j_21
                     )
+
+                    # SET RESERVOIR BOUNDARY CONDITIONS ALSO MINIMUM ZERO, AND CALC. FILLING DEGREE
+                    storage_depth = {}
+                    storage_total_depth = 0
+                    for junction in junctions:
+                        prob += (
+                            junction_filled_volume[junction]
+                            <= JUNCTION_MAX_STORAGE[junction]
+                        )
+                        prob += junction_filled_volume[junction] >= 0
+
+                        storage_depth[junction] = (
+                            junction_filled_volume[junction]
+                            / JUNCTION_MAX_STORAGE[junction]
+                        )
+                        storage_total_depth += (
+                            junction_filled_volume[junction]
+                            / JUNCTION_MAX_STORAGE[junction]
+                        )
 
                 # TODO: Add all above to the i loop.
 
@@ -244,6 +246,7 @@ for file_number in range(1, 5 + 1):
                 abs_diff = {}
                 equal_fill_obj = pl.LpVariable("equal_fill_obj", lowBound=0)
                 for junction in storage_depth:
+                    break
                     # Create a new variable for the absolute difference
                     abs_diff[junction] = pl.LpVariable(
                         f"abs_diff_{junction}", lowBound=0
@@ -262,7 +265,7 @@ for file_number in range(1, 5 + 1):
 
                 # Set FUNCTION OBJECTIVE
 
-                prob += spill_obj + equal_fill_obj
+                prob += spill_obj #+ equal_fill_obj
 
                 prob.solve()
 
