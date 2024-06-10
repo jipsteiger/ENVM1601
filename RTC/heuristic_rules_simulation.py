@@ -5,7 +5,7 @@ import pandas as pd
 import RTC.heuristic_rules as rule
 from typing import List
 import datetime as dt
-
+ 
 
 def main():
     csos = {
