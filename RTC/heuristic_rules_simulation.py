@@ -39,7 +39,7 @@ def main():
 
     now = dt.datetime.now()
     cso_result = pd.DataFrame(csos, index=[now.strftime("%d/%m %H:%M")])
-    sum_result = pd.DataFrame(
+    sum_result = pd.DataFrame( 
         {"obj_fun_sum": som, "spill_sum": cso_sum}, index=[now.strftime("%d/%m %H:%M")]
     )
     sim_result = pd.concat([cso_result, sum_result], axis=1)
