@@ -86,6 +86,7 @@ def simulate(
         sim.end_time = dt.datetime(year=2020, month=end_month, day=end_day)
 
         for step in sim:
+            
             links = assign_target(*rule.p10_1(nodes), links)
             links = assign_target(*rule.p_21_2(nodes), links)
             links = assign_target(*rule.WWTP_inlet(nodes), links)
