@@ -1,4 +1,4 @@
-import ENVM1601_CentralBasinApproach as CBA
+import RTC.ENVM1601_CentralBasinApproach as CBA
 import swmm_api
 
 
@@ -9,7 +9,7 @@ storages = [
     ["j_2", 2.48],
     ["j_20", 1.90],
 ]
-c = CBA.Central_Basin_Approach("RTC/data/")
+c = CBA.Central_Basin_Approach("RTC/CBA_folder/")
 model = c.create_CBA_model(storages)
 
 read_file = swmm_api.read_out_file("RTC/data/Dean Town.out")
