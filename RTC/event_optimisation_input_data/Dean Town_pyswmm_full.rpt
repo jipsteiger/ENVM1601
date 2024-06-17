@@ -1,0 +1,289 @@
+
+  EPA STORM WATER MANAGEMENT MODEL - VERSION 5.2 (Build 5.2.4)
+  PYSWMM TOOLKIT API - VERSION v1.0 (2023-11-27)
+  ------------------------------------------------------------
+
+  
+  ****************
+  Analysis Options
+  ****************
+  Flow Units ............... CMS
+  Process Models:
+    Rainfall/Runoff ........ YES
+    RDII ................... NO
+    Snowmelt ............... NO
+    Groundwater ............ NO
+    Flow Routing ........... YES
+    Ponding Allowed ........ YES
+    Water Quality .......... NO
+  Infiltration Method ...... HORTON
+  Flow Routing Method ...... DYNWAVE
+  Surcharge Method ......... EXTRAN
+  Starting Date ............ 01/01/2020 00:00:00
+  Ending Date .............. 12/31/2020 00:00:00
+  Antecedent Dry Days ...... 0.0
+  Report Time Step ......... 00:15:00
+  Wet Time Step ............ 00:00:15
+  Dry Time Step ............ 01:00:00
+  Routing Time Step ........ 8.00 sec
+  Variable Time Step ....... YES
+  Maximum Trials ........... 16
+  Number of Threads ........ 2
+  Head Tolerance ........... 0.000015 m
+  
+  
+  **************************        Volume         Depth
+  Runoff Quantity Continuity     hectare-m            mm
+  **************************     ---------       -------
+  Total Precipitation ......       137.761       429.984
+  Evaporation Loss .........         0.000         0.000
+  Infiltration Loss ........        13.193        41.178
+  Surface Runoff ...........       124.416       388.330
+  Final Storage ............         0.227         0.708
+  Continuity Error (%) .....        -0.054
+  
+  
+  **************************        Volume        Volume
+  Flow Routing Continuity        hectare-m      10^6 ltr
+  **************************     ---------     ---------
+  Dry Weather Inflow .......        52.487       524.873
+  Wet Weather Inflow .......       124.418      1244.196
+  Groundwater Inflow .......         0.000         0.000
+  RDII Inflow ..............         0.000         0.000
+  External Inflow ..........         0.000         0.000
+  External Outflow .........       168.287      1682.889
+  Flooding Loss ............         0.000         0.000
+  Evaporation Loss .........         0.000         0.000
+  Exfiltration Loss ........         0.000         0.000
+  Initial Stored Volume ....         0.000         0.000
+  Final Stored Volume ......         0.044         0.441
+  Continuity Error (%) .....         4.847
+  
+  
+  *************************
+  Highest Continuity Errors
+  *************************
+  Node j_2 (5.87%)
+  
+  
+  ***************************
+  Time-Step Critical Elements
+  ***************************
+  None
+  
+  
+  ********************************
+  Highest Flow Instability Indexes
+  ********************************
+  Link p_2_1 (8)
+  Link WWTP_inlet (1)
+  
+  
+  *********************************
+  Most Frequent Nonconverging Nodes
+  *********************************
+  Convergence obtained at all time steps.
+  
+  
+  *************************
+  Routing Time Step Summary
+  *************************
+  Minimum Time Step           :     8.00 sec
+  Average Time Step           :     8.00 sec
+  Maximum Time Step           :     8.00 sec
+  % of Time in Steady State   :     0.00
+  Average Iterations per Step :     6.16
+  % of Steps Not Converging   :     0.68
+  Time Step Frequencies       :
+      8.000 -  2.899 sec      :   100.00 %
+      2.899 -  1.051 sec      :     0.00 %
+      1.051 -  0.381 sec      :     0.00 %
+      0.381 -  0.138 sec      :     0.00 %
+      0.138 -  0.050 sec      :     0.00 %
+  
+  
+  ***************************
+  Subcatchment Runoff Summary
+  ***************************
+  
+  ------------------------------------------------------------------------------------------------------------------------------
+                            Total      Total      Total      Total     Imperv       Perv      Total       Total     Peak  Runoff
+                           Precip      Runon       Evap      Infil     Runoff     Runoff     Runoff      Runoff   Runoff   Coeff
+  Subcatchment                 mm         mm         mm         mm         mm         mm         mm    10^6 ltr      CMS
+  ------------------------------------------------------------------------------------------------------------------------------
+  sub_1a                   419.16       0.00       0.00      64.02     299.47      55.44     354.92      237.77     5.29   0.847
+  sub_21a                  436.90       0.00       0.00      40.03     357.41      39.31     396.71       34.35     0.59   0.908
+  sub_10a                  419.16       0.00       0.00      25.57     370.73      22.15     392.88      227.51     4.60   0.937
+  sub_2a                   436.90       0.00       0.00      24.82     387.11      24.37     411.48      475.06     7.83   0.942
+  sub_2b                   436.90       0.00       0.00     141.50     156.96     138.95     295.91       22.76     0.52   0.677
+  sub_2c                   436.90       0.00       0.00      48.16     340.79      47.29     388.08       36.07     0.63   0.888
+  sub_21b                  436.90       0.00       0.00       0.38     435.10       0.38     435.48       13.27     0.21   0.997
+  sub_21c                  436.90       0.00       0.00     194.83      51.78     191.32     243.09        4.10     0.11   0.556
+  sub_2d                   436.90       0.00       0.00      56.25     324.70      55.24     379.93       50.83     0.90   0.870
+  sub_2e                   436.90       0.00       0.00      61.53     314.51      60.42     374.93       46.45     0.84   0.858
+  sub_2f                   436.90       0.00       0.00       8.61     419.31       8.46     427.77       16.28     0.26   0.979
+  sub_20a                  436.90       0.00       0.00      39.73     357.90      39.01     396.91       79.71     1.36   0.908
+  
+  
+  ******************
+  Node Depth Summary
+  ******************
+  
+  ---------------------------------------------------------------------------------
+                                 Average  Maximum  Maximum  Time of Max    Reported
+                                   Depth    Depth      HGL   Occurrence   Max Depth
+  Node                 Type       Meters   Meters   Meters  days hr:min      Meters
+  ---------------------------------------------------------------------------------
+  cso_1                OUTFALL      0.00     0.00     8.91     0  00:00        0.00
+  cso_20               OUTFALL      0.00     0.00     8.30     0  00:00        0.00
+  cso_2a               OUTFALL      0.00     0.00     8.30     0  00:00        0.00
+  cso_21a              OUTFALL      0.00     0.00     8.93     0  00:00        0.00
+  cso_10               OUTFALL      0.00     0.00     8.31     0  00:00        0.00
+  Wastewater_Treatment_Plant OUTFALL      0.00     0.00     9.11     0  00:00        0.00
+  cso_21b              OUTFALL      0.00     0.00     9.12     0  00:00        0.00
+  cso_2b               OUTFALL      0.00     0.00     9.12     0  00:00        0.00
+  j_1                  STORAGE      0.20     2.15    11.22   163  22:35        2.12
+  j_21                 STORAGE      0.24     2.26    12.27   168  20:15        2.26
+  j_10                 STORAGE      0.21     2.10    10.51    53  11:06        2.10
+  j_2                  STORAGE      0.23     2.72    10.51   168  20:20        2.71
+  j_20                 STORAGE      0.56     2.06    10.95   182  12:40        2.05
+  
+  
+  *******************
+  Node Inflow Summary
+  *******************
+  
+  -------------------------------------------------------------------------------------------------
+                                  Maximum  Maximum                  Lateral       Total        Flow
+                                  Lateral    Total  Time of Max      Inflow      Inflow     Balance
+                                   Inflow   Inflow   Occurrence      Volume      Volume       Error
+  Node                 Type           CMS      CMS  days hr:min    10^6 ltr    10^6 ltr     Percent
+  -------------------------------------------------------------------------------------------------
+  cso_1                OUTFALL      0.000    4.120   163  22:35           0          11       0.000
+  cso_20               OUTFALL      0.000    0.811   182  12:40           0        15.1       0.000
+  cso_2a               OUTFALL      0.000    3.466   168  20:20           0        19.3       0.000
+  cso_21a              OUTFALL      0.000    0.450   168  20:15           0        3.34       0.000
+  cso_10               OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
+  Wastewater_Treatment_Plant OUTFALL      0.000    1.167    32  10:16           0     1.5e+03       0.000
+  cso_21b              OUTFALL      0.000    0.028    33  21:32           0        6.14       0.000
+  cso_2b               OUTFALL      0.000    0.556    27  01:10           0         123       0.000
+  j_1                  STORAGE      5.297    5.948   122  08:40         393    1.53e+03       0.886
+  j_21                 STORAGE      0.907    0.907    50  19:05        88.9        88.9       0.430
+  j_10                 STORAGE      4.598    4.598   122  08:40         238         238       1.742
+  j_2                  STORAGE     10.981   10.981    50  19:05         866    1.11e+03       6.240
+  j_20                 STORAGE      1.361    1.361    50  19:05         183         183       1.483
+  
+  
+  **********************
+  Node Surcharge Summary
+  **********************
+  
+  No nodes were surcharged.
+  
+  
+  *********************
+  Node Flooding Summary
+  *********************
+  
+  No nodes were flooded.
+  
+  
+  **********************
+  Storage Volume Summary
+  **********************
+  
+  ------------------------------------------------------------------------------------------------
+                         Average    Avg   Evap  Exfil     Maximum    Max    Time of Max    Maximum
+                          Volume   Pcnt   Pcnt   Pcnt      Volume   Pcnt     Occurrence    Outflow
+  Storage Unit           1000 m³   Full   Loss   Loss     1000 m³   Full    days hr:min        CMS
+  ------------------------------------------------------------------------------------------------
+  j_1                      0.139    3.9    0.0    0.0       3.237   90.8     163  22:35      5.286
+  j_21                     0.042    3.2    0.0    0.0       1.178   90.1     168  20:15      0.478
+  j_10                     0.075    0.6    0.0    0.0      10.669   91.5      53  11:06      0.694
+  j_2                      0.097    0.6    0.0    0.0      11.938   75.5     168  20:20      4.522
+  j_20                     0.255    9.3    0.0    0.0       2.156   78.7     182  12:40      0.826
+  
+  
+  ***********************
+  Outfall Loading Summary
+  ***********************
+  
+  -----------------------------------------------------------
+                         Flow       Avg       Max       Total
+                         Freq      Flow      Flow      Volume
+  Outfall Node           Pcnt       CMS       CMS    10^6 ltr
+  -----------------------------------------------------------
+  cso_1                  0.07     0.695     4.120      11.003
+  cso_20                 0.93     0.076     0.811      15.143
+  cso_2a                 0.07     1.259     3.466      19.282
+  cso_21a                0.14     0.113     0.450       3.345
+  cso_10                 0.00     0.000     0.000       0.000
+  Wastewater_Treatment_Plant  17.68     0.399     1.167    1504.966
+  cso_21b                1.04     0.028     0.028       6.138
+  cso_2b                 1.04     0.556     0.556     123.005
+  -----------------------------------------------------------
+  System                 2.62     3.126     6.349    1682.882
+  
+  
+  ********************
+  Link Flow Summary
+  ********************
+  
+  -----------------------------------------------------------------------------
+                                 Maximum  Time of Max   Maximum    Max/    Max/
+                                  |Flow|   Occurrence   |Veloc|    Full    Full
+  Link                 Type          CMS  days hr:min     m/sec    Flow   Depth
+  -----------------------------------------------------------------------------
+  p_20_2               PUMP        0.015     0  00:37              1.00
+  WWTP_inlet           PUMP        1.167    32  10:16              1.00
+  p_21_2               PUMP        0.042    27  03:05              1.00
+  CSO_Pump_21          PUMP        0.028    33  21:32              1.00
+  p10_1                PUMP        0.694    53  10:26              1.00
+  p_2_1                PUMP        0.500    27  01:16              1.00
+  CSO_Pump_2           PUMP        0.556    27  01:10              1.00
+  cso_weir_1           WEIR        4.120   163  22:35                      0.16
+  cso_weir_20          WEIR        0.811   182  12:40                      0.08
+  cso_weir_2           WEIR        3.466   168  20:20                      0.12
+  cso_weir_21          WEIR        0.450   168  20:15                      0.05
+  cso_weir_10          WEIR        0.000     0  00:00                      0.00
+  
+  
+  ***************************
+  Flow Classification Summary
+  ***************************
+  
+  -------------------------------------------------------------------------------------
+                      Adjusted    ---------- Fraction of Time in Flow Class ---------- 
+                       /Actual         Up    Down  Sub   Sup   Up    Down  Norm  Inlet 
+  Conduit               Length    Dry  Dry   Dry   Crit  Crit  Crit  Crit  Ltd   Ctrl  
+  -------------------------------------------------------------------------------------
+  
+  
+  *************************
+  Conduit Surcharge Summary
+  *************************
+  
+  No conduits were surcharged.
+  
+  
+  ***************
+  Pumping Summary
+  ***************
+  
+  ---------------------------------------------------------------------------------------------------------
+                                                  Min       Avg       Max     Total     Power    % Time Off
+                        Percent   Number of      Flow      Flow      Flow    Volume     Usage    Pump Curve
+  Pump                 Utilized   Start-Ups       CMS       CMS       CMS  10^6 ltr     Kw-hr    Low   High
+  ---------------------------------------------------------------------------------------------------------
+  p_20_2                  51.36       15146      0.00      0.01      0.01   164.284    759.79    0.0  100.0
+  WWTP_inlet              17.68       20625      0.00      0.40      1.17  1504.966   2720.36    0.0    0.0
+  p_21_2                  13.83        2163      0.00      0.03      0.04    79.032    479.46    0.0    0.0
+  CSO_Pump_21              1.04          14      0.00      0.03      0.03     6.138     40.71    0.0    0.0
+  p10_1                    3.99        2489      0.00      0.28      0.69   234.314    686.34    0.0    0.0
+  p_2_1                   11.80      137968      0.00      0.36      0.50   902.081   2347.07    0.0    0.0
+  CSO_Pump_2               1.04          30      0.00      0.56      0.56   123.005    251.03    0.0    0.0
+  
+
+  Analysis begun on:  Mon Jun 17 16:59:27 2024
+  Analysis ended on:  Mon Jun 17 17:31:57 2024
+  Total elapsed time: 00:32:30

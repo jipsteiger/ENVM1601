@@ -96,15 +96,6 @@
 
 #     return "p10_1", target
 def CSO_Pump_21(nodes, target=None):
-    """Checks wether target value for specific pump needs to be updated
-
-    Args:
-        nodes (_type_): Contains depth information
-        target (_type_, optional): Initialization of target. Defaults to None.
-
-    Returns:
-        _type_: Name of to be updated pump, target value of that pump
-    """
     if nodes["j_21"].depth >= 1.2:
         target = 1
     if nodes["j_21"].depth <= 1.0:

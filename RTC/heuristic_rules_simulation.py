@@ -5,7 +5,7 @@ import pandas as pd
 import RTC.heuristic_rules as rule
 from typing import List
 import datetime as dt
- 
+
 
 def main():
     csos = {
@@ -18,16 +18,17 @@ def main():
         "cso_2b": 0,
     }
 
-    parameters = [
-        [6, 11, 6, 16, "Major event june"],
-        [12, 10, 12, 20, "Minor event december"],
-        [9, 22, 9, 30, "Multiple average events september"],
-        [2, 8, 2, 12, "3 major events february"],
-        [2, 20, 2, 22, "Peak intensity event february"],
-    ]
+    # parameters = [
+    #     [6, 11, 6, 16, "Major event june"],
+    #     [12, 10, 12, 20, "Minor event december"],
+    #     [9, 22, 9, 30, "Multiple average events september"],
+    #     [2, 8, 2, 12, "3 major events february"],
+    #     [2, 20, 2, 22, "Peak intensity event february"],
+    # ]
     # parameters = [[6, 1, 7, 1, 'SWMM JUNE TEST']] #Test params
-    # parameters = [[1, 1, 12, 31, 'Full year sim']]
-    som, cso_sum, simulation = 0, 0, 1
+    simulation = 1
+    parameters, simulation = [[1, 1, 12, 31, "Full year sim"]], "full"
+    som, cso_sum = 0, 0
     for params in parameters:
         simulate(*params, simulation)
         som, csos, cso_sum = process_output(params[-1], csos, som, cso_sum, simulation)
@@ -39,7 +40,7 @@ def main():
 
     now = dt.datetime.now()
     cso_result = pd.DataFrame(csos, index=[now.strftime("%d/%m %H:%M")])
-    sum_result = pd.DataFrame( 
+    sum_result = pd.DataFrame(
         {"obj_fun_sum": som, "spill_sum": cso_sum}, index=[now.strftime("%d/%m %H:%M")]
     )
     sim_result = pd.concat([cso_result, sum_result], axis=1)
@@ -86,7 +87,7 @@ def simulate(
         sim.end_time = dt.datetime(year=2020, month=end_month, day=end_day)
 
         for step in sim:
-            
+
             links = assign_target(*rule.p10_1(nodes), links)
             links = assign_target(*rule.p_21_2(nodes), links)
             links = assign_target(*rule.WWTP_inlet(nodes), links)
