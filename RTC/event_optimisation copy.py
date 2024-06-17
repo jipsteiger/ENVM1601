@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 3  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 9  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -236,6 +236,12 @@ for file_number in range(1, 5 + 1):
                             junction_filled_volume[junction]
                             / JUNCTION_MAX_STORAGE[junction]
                         )
+                filling_penalty = pl.LpVariable("equal_fill_obj", lowBound=0)
+                filling_penalty += ( 
+                    junction_filled_volume["j_10"] + 
+                junction_filled_volume["j_2"] +
+                junction_filled_volume["j_21"] +
+                junction_filled_volume["j_20"]) 
 
                 # TODO: Add all above to the i loop.
 
@@ -265,7 +271,7 @@ for file_number in range(1, 5 + 1):
 
                 # Set FUNCTION OBJECTIVE
 
-                prob += spill_obj #+ equal_fill_obj
+                prob += spill_obj + filling_penalty #+ equal_fill_obj
 
                 prob.solve()
 
@@ -311,7 +317,15 @@ for file_number in range(1, 5 + 1):
     print(f"Total CSO overflow in this event: {output['Total_Volume_10^6 ltr'].sum()}")
     summer = [2, 2, 2, 2, 2, 1 / 500, 1 / 500]
     winter = [1, 1, 1, 1, 2, 1 / 500, 1 / 500]
-
+    CSOS = {
+        "cso_1": 0,
+        "cso_20": 0,
+        "cso_2a": 0,
+        "cso_21a": 0,
+        "cso_10": 0,
+        "cso_21b": 0,
+        "cso_2b": 0,
+    }
     for k, cso in enumerate(
         ["cso_1", "cso_20", "cso_2a", "cso_21a", "cso_10", "cso_21b", "cso_2b"]
     ):
