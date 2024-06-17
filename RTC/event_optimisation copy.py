@@ -128,7 +128,7 @@ for file_number in range(1, 5 + 1):
                     prob += x_vars[10 + 12 * i] >= 0
                     prob += x_vars[11 + 12 * i] >= 0
                     prob += x_vars[12 + 12 * i] >= 0
-
+                
                     prob += x_vars[6 + 12 * i] <= CSO_PUMP_2_MAX
                     prob += x_vars[7 + 12 * i] <= CSO_PUMP_21_MAX
                     prob += x_vars[8 + 12 * i] <= P_10_1_MAX
@@ -342,8 +342,8 @@ for file_number in range(1, 5 + 1):
     display(sim_result)  # type: ignore
 if EVENT_NAME[-1] == "Full year sim":
     results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
-    updated_results = pd.concat([results, sim_result])
-    updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
+    #updated_results = pd.concat([results, sim_result])
+    #updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
 else:
     results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
     updated_results = pd.concat([results, sim_result])
