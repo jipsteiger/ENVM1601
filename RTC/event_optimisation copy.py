@@ -99,6 +99,7 @@ for file_number in range(1, 5 + 1):
 
                 x_vars = pl.LpVariable.dicts("x", decision_indices, 0, None, pl.LpContinuous)  # type: ignore
                 filling_penalty = pl.LpVariable("equal_fill_obj", lowBound=0)
+
                 # Add boundaries for each timestep
                 for i in range(0, NUMBER_OF_TIME_STEPS):
                     # Setup objective function values
@@ -162,10 +163,6 @@ for file_number in range(1, 5 + 1):
                         -x_vars[5 + 12 * i] - x_vars[7 + 12 * i] - x_vars[11 + 12 * i]
                     )
 
-                    # TODO: junction filled volume has to be used in the i loop, has to be calculated for each time step.
-                    # If that doesnt work, add to the the function objective something that penalises volume in all nodes
-                    # except for j_1. And promotes usage of pumping to j_1.
-
                     # CALCULATE RESERVOIR VOLUMES
                     # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
                     # cannot be more than the max storage volume in node
@@ -207,7 +204,7 @@ for file_number in range(1, 5 + 1):
                         + reservoir_delta_j_21
                     )
 
-                    # SET RESERVOIR BOUNDARY CONDITIONS ALSO MINIMUM ZERO, AND CALC. FILLING DEGREE
+                    # SET RESERVOIR BOUNDARY CONDITIONS ALSO MINIMUM ZERO, AND SET FILLING PENALTY
                     storage_depth = {}
                     storage_total_depth = 0
                     for junction in junctions:
@@ -223,44 +220,11 @@ for file_number in range(1, 5 + 1):
                                 / JUNCTION_MAX_STORAGE[junction]
                             ) * 100
 
-                        storage_depth[junction] = (
-                            junction_filled_volume[junction]
-                            / JUNCTION_MAX_STORAGE[junction]
-                        )
-                        storage_total_depth += (
-                            junction_filled_volume[junction]
-                            / JUNCTION_MAX_STORAGE[junction]
-                        )
-
-                # TODO: Add all above to the i loop.
-
                 storage_mean_depth = storage_total_depth / len(junctions)
-
-                # Calculate equal filling degree to objective function, based on filling degree per junction
-                # THIS SECTION IS PARTLY PROVIDED BY CHATGPT DUE TO JANKY ABSOLUTES
-                abs_diff = {}
-                equal_fill_obj = pl.LpVariable("equal_fill_obj", lowBound=0)
-                for junction in storage_depth:
-                    break
-                    # Create a new variable for the absolute difference
-                    abs_diff[junction] = pl.LpVariable(
-                        f"abs_diff_{junction}", lowBound=0
-                    )
-
-                    # Add constraints for the absolute difference
-                    prob += abs_diff[junction] >= (
-                        storage_depth[junction] - storage_mean_depth
-                    )
-                    prob += abs_diff[junction] >= -(
-                        storage_depth[junction] - storage_mean_depth
-                    )
-
-                    # Add the weighted absolute difference to the objective
-                    equal_fill_obj += EQUAL_FILLING_WEIGHT * abs_diff[junction]
 
                 # Set FUNCTION OBJECTIVE
 
-                prob += spill_obj + filling_penalty  # + equal_fill_obj
+                prob += spill_obj + filling_penalty
 
                 prob.solve()
 
