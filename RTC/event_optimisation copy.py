@@ -98,7 +98,7 @@ for file_number in range(1, 5 + 1):
                 ]
 
                 x_vars = pl.LpVariable.dicts("x", decision_indices, 0, None, pl.LpContinuous)  # type: ignore
-
+                filling_penalty = pl.LpVariable("equal_fill_obj", lowBound=0)
                 # Add boundaries for each timestep
                 for i in range(0, NUMBER_OF_TIME_STEPS):
                     # Setup objective function values
@@ -128,7 +128,7 @@ for file_number in range(1, 5 + 1):
                     prob += x_vars[10 + 12 * i] >= 0
                     prob += x_vars[11 + 12 * i] >= 0
                     prob += x_vars[12 + 12 * i] >= 0
-                
+
                     prob += x_vars[6 + 12 * i] <= CSO_PUMP_2_MAX
                     prob += x_vars[7 + 12 * i] <= CSO_PUMP_21_MAX
                     prob += x_vars[8 + 12 * i] <= P_10_1_MAX
@@ -170,11 +170,12 @@ for file_number in range(1, 5 + 1):
                     # current volume + timedelta * (inflow (precipitation and connections) - outflow(pump & cso))
                     # cannot be more than the max storage volume in node
                     junction_filled_volume = {}
-                    junction_filled_volume["j_1"] = initial_filling[0] + time_step_size * (
+                    junction_filled_volume["j_1"] = initial_filling[
+                        0
+                    ] + time_step_size * (
                         np.sum(
                             j1_in[
-                                number_of_steps_taken : number_of_steps_taken
-                                + (i + 1)
+                                number_of_steps_taken : number_of_steps_taken + (i + 1)
                             ]
                         )
                         + reservoir_delta_j_1
@@ -182,39 +183,27 @@ for file_number in range(1, 5 + 1):
                     junction_filled_volume["j_10"] = initial_filling[
                         1
                     ] + time_step_size * np.sum(
-                        j10_in[
-                            number_of_steps_taken : number_of_steps_taken
-                            + (i + 1)
-                        ]
+                        j10_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
                         + reservoir_delta_j_10
                     )
                     junction_filled_volume["j_2"] = initial_filling[
                         2
                     ] + time_step_size * np.sum(
-                        j2_in[
-                            number_of_steps_taken : number_of_steps_taken
-                            + (i + 1)
-                        ]
+                        j2_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
                         + reservoir_delta_j_2
                     )
 
                     junction_filled_volume["j_20"] = initial_filling[
                         3
                     ] + time_step_size * np.sum(
-                        j20_in[
-                            number_of_steps_taken : number_of_steps_taken
-                            + (i + 1)
-                        ]
+                        j20_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
                         + reservoir_delta_j_20
                     )
 
                     junction_filled_volume["j_21"] = initial_filling[
                         4
                     ] + time_step_size * np.sum(
-                        j21_in[
-                            number_of_steps_taken : number_of_steps_taken
-                            + (i + 1)
-                        ]
+                        j21_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
                         + reservoir_delta_j_21
                     )
 
@@ -228,6 +217,12 @@ for file_number in range(1, 5 + 1):
                         )
                         prob += junction_filled_volume[junction] >= 0
 
+                        if junction != "j_1":
+                            filling_penalty += (
+                                junction_filled_volume[junction]
+                                / JUNCTION_MAX_STORAGE[junction]
+                            ) * 100
+
                         storage_depth[junction] = (
                             junction_filled_volume[junction]
                             / JUNCTION_MAX_STORAGE[junction]
@@ -236,12 +231,6 @@ for file_number in range(1, 5 + 1):
                             junction_filled_volume[junction]
                             / JUNCTION_MAX_STORAGE[junction]
                         )
-                filling_penalty = pl.LpVariable("equal_fill_obj", lowBound=0)
-                filling_penalty += ( 
-                    junction_filled_volume["j_10"] + 
-                junction_filled_volume["j_2"] +
-                junction_filled_volume["j_21"] +
-                junction_filled_volume["j_20"]) 
 
                 # TODO: Add all above to the i loop.
 
@@ -271,7 +260,7 @@ for file_number in range(1, 5 + 1):
 
                 # Set FUNCTION OBJECTIVE
 
-                prob += spill_obj + filling_penalty #+ equal_fill_obj
+                prob += spill_obj + filling_penalty  # + equal_fill_obj
 
                 prob.solve()
 
@@ -317,15 +306,7 @@ for file_number in range(1, 5 + 1):
     print(f"Total CSO overflow in this event: {output['Total_Volume_10^6 ltr'].sum()}")
     summer = [2, 2, 2, 2, 2, 1 / 500, 1 / 500]
     winter = [1, 1, 1, 1, 2, 1 / 500, 1 / 500]
-    CSOS = {
-        "cso_1": 0,
-        "cso_20": 0,
-        "cso_2a": 0,
-        "cso_21a": 0,
-        "cso_10": 0,
-        "cso_21b": 0,
-        "cso_2b": 0,
-    }
+
     for k, cso in enumerate(
         ["cso_1", "cso_20", "cso_2a", "cso_21a", "cso_10", "cso_21b", "cso_2b"]
     ):
@@ -356,8 +337,8 @@ for file_number in range(1, 5 + 1):
     display(sim_result)  # type: ignore
 if EVENT_NAME[-1] == "Full year sim":
     results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
-    #updated_results = pd.concat([results, sim_result])
-    #updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
+    # updated_results = pd.concat([results, sim_result])
+    # updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
 else:
     results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
     updated_results = pd.concat([results, sim_result])
