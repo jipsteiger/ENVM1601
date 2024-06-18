@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 9  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 1  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -218,9 +218,7 @@ for file_number in range(1, 5 + 1):
                             filling_penalty += (
                                 junction_filled_volume[junction]
                                 / JUNCTION_MAX_STORAGE[junction]
-                            ) * 100
-
-                storage_mean_depth = storage_total_depth / len(junctions)
+                            ) * 5
 
                 # Set FUNCTION OBJECTIVE
 
