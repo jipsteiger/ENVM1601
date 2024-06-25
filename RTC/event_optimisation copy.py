@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 1  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 4  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -40,7 +40,7 @@ CSO_CREST_HEIGHT = [1.83, 2.21, 2.48, 1.90, 2.16]  # Crest height of all weirs
 
 junctions = ["j_1", "j_10", "j_2", "j_20", "j_21"]
 
-EQUAL_FILLING_WEIGHT = 10
+EQUAL_FILLING_WEIGHT = 50
 
 JUNCTION_MAX_STORAGE = {}
 
@@ -50,7 +50,7 @@ cso_sum = 0
 # Calculate max storage in node based on weir crest height by using the storage curve
 for i, junction in enumerate(junctions):
     storage_curve = pd.read_csv(
-        f"RTC/event_optimisation_input_data/storage_curve_{int(junction.split('_')[-1])}.dat",
+        rf"RTC\event_optimisation_input_data/storage_curve_{int(junction.split('_')[-1])}.dat",
         delimiter=" ",
         skiprows=2,
         names=["depth", "area"],
@@ -61,7 +61,7 @@ for i, junction in enumerate(junctions):
     )
     JUNCTION_MAX_STORAGE[junction] = max_storage
 
-for file_number in range(1, 5 + 1):
+for file_number in [3]:  # range(1, 5 + 1):
     output_inflow = sa.read_out_file(
         rf"RTC\event_optimisation_output_data\Dean Town_pyswmm_{file_number}.out"
     ).to_frame()
@@ -71,18 +71,30 @@ for file_number in range(1, 5 + 1):
     j20_in = output_inflow["node"]["j_20"]["lateral_inflow"] * 1000
     j21_in = output_inflow["node"]["j_21"]["lateral_inflow"] * 1000
 
+    pumps = {
+        "CSO_Pump_2": [],
+        "CSO_Pump_21": [],
+        "p10_1": [],
+        "p_2_1": [],
+        "p_20_2": [],
+        "p_21_2": [],
+    }
+    index_pump = []
+
     with pyswmm.Simulation(
-        f"RTC\event_optimisation_input_data\Dean Town_pyswmm_{file_number}.inp"
+        rf"RTC\event_optimisation_input_data\Dean Town_pyswmm_{file_number}.inp"
     ) as sim:
+
         nodes = pyswmm.Nodes(sim)
         links = pyswmm.Links(sim)
 
         time_step_size = 15 * 60
         sim.step_advance(time_step_size)
-        number_of_steps_taken = 0
+        number_of_steps_taken = -1
         for step in sim:
             number_of_steps_taken += 1
-            if (nodes["j_1"].depth > 0.2) or (nodes["j_20"].depth > 0.2):
+            # if (nodes["j_1"].depth > 0.2) or (nodes["j_20"].depth > 0.2):
+            if True:
                 initial_filling = [nodes[j].volume for j in junctions]
                 prob = pl.LpProblem("DeanTown", pl.LpMinimize)  # type: ignore
                 reservoir_delta_j_1 = 0
@@ -98,7 +110,7 @@ for file_number in range(1, 5 + 1):
                 ]
 
                 x_vars = pl.LpVariable.dicts("x", decision_indices, 0, None, pl.LpContinuous)  # type: ignore
-                filling_penalty = pl.LpVariable("equal_fill_obj", lowBound=0)
+                filling_penalty = 0
 
                 # Add boundaries for each timestep
                 for i in range(0, NUMBER_OF_TIME_STEPS):
@@ -179,28 +191,44 @@ for file_number in range(1, 5 + 1):
                     )
                     junction_filled_volume["j_10"] = initial_filling[
                         1
-                    ] + time_step_size * np.sum(
-                        j10_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
+                    ] + time_step_size * (
+                        np.sum(
+                            j10_in[
+                                number_of_steps_taken : number_of_steps_taken + (i + 1)
+                            ]
+                        )
                         + reservoir_delta_j_10
                     )
                     junction_filled_volume["j_2"] = initial_filling[
                         2
-                    ] + time_step_size * np.sum(
-                        j2_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
+                    ] + time_step_size * (
+                        np.sum(
+                            j2_in[
+                                number_of_steps_taken : number_of_steps_taken + (i + 1)
+                            ]
+                        )
                         + reservoir_delta_j_2
                     )
 
                     junction_filled_volume["j_20"] = initial_filling[
                         3
-                    ] + time_step_size * np.sum(
-                        j20_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
+                    ] + time_step_size * (
+                        np.sum(
+                            j20_in[
+                                number_of_steps_taken : number_of_steps_taken + (i + 1)
+                            ]
+                        )
                         + reservoir_delta_j_20
                     )
 
                     junction_filled_volume["j_21"] = initial_filling[
                         4
-                    ] + time_step_size * np.sum(
-                        j21_in[number_of_steps_taken : number_of_steps_taken + (i + 1)]
+                    ] + time_step_size * (
+                        np.sum(
+                            j21_in[
+                                number_of_steps_taken : number_of_steps_taken + (i + 1)
+                            ]
+                        )
                         + reservoir_delta_j_21
                     )
 
@@ -218,7 +246,7 @@ for file_number in range(1, 5 + 1):
                             filling_penalty += (
                                 junction_filled_volume[junction]
                                 / JUNCTION_MAX_STORAGE[junction]
-                            ) * 5
+                            ) * EQUAL_FILLING_WEIGHT
 
                 # Set FUNCTION OBJECTIVE
 
@@ -254,6 +282,19 @@ for file_number in range(1, 5 + 1):
                     prob.variables()[var_list.index("x_12")].varValue / WWTP_INLET_MAX
                 )
 
+                for pump in [
+                    "CSO_Pump_2",
+                    "CSO_Pump_21",
+                    "p10_1",
+                    "p_2_1",
+                    "p_20_2",
+                    "p_21_2",
+                ]:
+                    pumps[pump].append(links[pump].target_setting)
+                index_pump.append(sim.current_time)
+    pumps_df = pd.DataFrame(pumps, index=index_pump)
+    pumps_df.to_csv("RTC/results/event_optimisation_pumps.csv")
+
     # ----------------------------------------------------------------------------------
     # Process output
     rpt = sa.read_rpt_file(
@@ -265,6 +306,7 @@ for file_number in range(1, 5 + 1):
     initial_sum = som
 
     print(EVENT_NAME[file_number - 1])
+    print(f"PULP objective function = {pl.value(prob.objective)}")
     print(f"Total CSO overflow in this event: {output['Total_Volume_10^6 ltr'].sum()}")
     summer = [2, 2, 2, 2, 2, 1 / 500, 1 / 500]
     winter = [1, 1, 1, 1, 2, 1 / 500, 1 / 500]
@@ -298,7 +340,8 @@ for file_number in range(1, 5 + 1):
 
     display(sim_result)  # type: ignore
 if EVENT_NAME[-1] == "Full year sim":
-    results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
+    pass
+    # results = pd.read_csv("RTC/results/event_optimisation_full_result.csv", index_col=0)
     # updated_results = pd.concat([results, sim_result])
     # updated_results.to_csv("RTC/results/event_optimisation_full_result.csv")
 else:

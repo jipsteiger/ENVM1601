@@ -161,7 +161,8 @@ j_20             FLOW             0.0047     "HOURLY_DWF_PATTERN"
 [CURVES]
 ;;Name           Type       X-Value    Y-Value   
 ;;-------------- ---------- ---------- ----------
-curve_20_2       Pump2      0.000000   0.015000  
+curve_20_2       Pump4      0.000000   0.015000  
+curve_20_2       	    10.000000  0.015000  
 ;
 curve_wwtp       Pump4      0.000000   0.000000  
 curve_wwtp                  0.100000   0.333333  
