@@ -8,7 +8,7 @@ from RTC.heuristic_rules_simulation import process_output
 import datetime as dt
 
 
-NUMBER_OF_TIME_STEPS = 4  # Number of time steps that are used for prediction
+NUMBER_OF_TIME_STEPS = 1  # Number of time steps that are used for prediction
 
 WWTP_INLET_MAX = 1.167  # CMS
 P_10_1_MAX = 0.694  # CMS
@@ -61,7 +61,7 @@ for i, junction in enumerate(junctions):
     )
     JUNCTION_MAX_STORAGE[junction] = max_storage
 
-for file_number in [3]:  # range(1, 5 + 1):
+for file_number in range(1, 5 + 1):
     output_inflow = sa.read_out_file(
         rf"RTC\event_optimisation_output_data\Dean Town_pyswmm_{file_number}.out"
     ).to_frame()

@@ -47,23 +47,24 @@
   Flow Routing Continuity        hectare-m      10^6 ltr
   **************************     ---------     ---------
   Dry Weather Inflow .......         0.850         8.501
-  Wet Weather Inflow .......         4.416        44.160
+  Wet Weather Inflow .......         4.413        44.129
   Groundwater Inflow .......         0.000         0.000
   RDII Inflow ..............         0.000         0.000
   External Inflow ..........         0.000         0.000
-  External Outflow .........         5.004        50.039
+  External Outflow .........         5.160        51.598
   Flooding Loss ............         0.000         0.000
   Evaporation Loss .........         0.000         0.000
   Exfiltration Loss ........         0.000         0.000
   Initial Stored Volume ....         0.000         0.000
-  Final Stored Volume ......         0.157         1.571
-  Continuity Error (%) .....         1.996
+  Final Stored Volume ......         0.186         1.858
+  Continuity Error (%) .....        -1.569
   
   
   *************************
   Highest Continuity Errors
   *************************
-  Node j_2 (1.78%)
+  Node j_2 (-1.68%)
+  Node j_1 (-1.33%)
   
   
   ***************************
@@ -75,8 +76,10 @@
   ********************************
   Highest Flow Instability Indexes
   ********************************
-  Link p_2_1 (9)
-  Link WWTP_inlet (1)
+  Link p_2_1 (138)
+  Link CSO_Pump_2 (138)
+  Link WWTP_inlet (61)
+  Link p10_1 (2)
   
   
   *********************************
@@ -88,12 +91,12 @@
   *************************
   Routing Time Step Summary
   *************************
-  Minimum Time Step           :     7.95 sec
-  Average Time Step           :     8.00 sec
+  Minimum Time Step           :     3.95 sec
+  Average Time Step           :     7.96 sec
   Maximum Time Step           :     8.00 sec
   % of Time in Steady State   :     0.00
-  Average Iterations per Step :     6.39
-  % of Steps Not Converging   :     0.59
+  Average Iterations per Step :    14.07
+  % of Steps Not Converging   :    83.81
   Time Step Frequencies       :
       8.000 -  2.899 sec      :   100.00 %
       2.899 -  1.051 sec      :     0.00 %
@@ -142,11 +145,11 @@
   Wastewater_Treatment_Plant OUTFALL      0.00     0.00     9.11     0  00:00        0.00
   cso_21b              OUTFALL      0.00     0.00     9.12     0  00:00        0.00
   cso_2b               OUTFALL      0.00     0.00     9.12     0  00:00        0.00
-  j_1                  STORAGE      0.29     1.93    11.00     1  21:25        1.71
-  j_21                 STORAGE      0.30     0.97    10.98     2  23:49        0.97
-  j_10                 STORAGE      0.16     0.91     9.32     1  21:37        0.91
-  j_2                  STORAGE      0.40     2.18     9.97     2  22:00        2.18
-  j_20                 STORAGE      1.00     1.91    10.80     2  22:10        1.90
+  j_1                  STORAGE      0.33     1.92    10.99     1  21:25        1.74
+  j_21                 STORAGE      0.10     0.90    10.91     2  22:05        0.89
+  j_10                 STORAGE      0.03     0.88     9.29     1  21:30        0.88
+  j_2                  STORAGE      0.11     2.15     9.94     2  22:00        2.15
+  j_20                 STORAGE      1.42     2.03    10.92     2  21:30        2.03
   
   
   *******************
@@ -159,19 +162,19 @@
                                    Inflow   Inflow   Occurrence      Volume      Volume       Error
   Node                 Type           CMS      CMS  days hr:min    10^6 ltr    10^6 ltr     Percent
   -------------------------------------------------------------------------------------------------
-  cso_1                OUTFALL      0.000    0.699     1  21:25           0      0.0627       0.000
-  cso_20               OUTFALL      0.000    0.008     2  22:10           0      0.0041       0.000
-  cso_2a               OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
+  cso_1                OUTFALL      0.000    0.581     1  21:25           0      0.0401       0.000
+  cso_20               OUTFALL      0.000    0.609     2  21:30           0        1.63       0.000
+  cso_2a               OUTFALL      0.000    0.003     2  06:25           0    2.31e-05       0.000 ltr
   cso_21a              OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
   cso_10               OUTFALL      0.000    0.000     0  00:00           0           0       0.000 ltr
-  Wastewater_Treatment_Plant OUTFALL      0.000    1.167     1  21:23           0        46.8       0.000
-  cso_21b              OUTFALL      0.000    0.000     0  00:00           0    2.79e-09       0.000 ltr
-  cso_2b               OUTFALL      0.000    0.556     2  21:39           0        3.15       0.000
-  j_1                  STORAGE      2.298    2.904     1  21:15        8.32        47.1       0.491
-  j_21                 STORAGE      0.585    0.585     2  21:30         2.8         2.8       0.619
-  j_10                 STORAGE      1.999    1.999     1  21:20        5.71        5.71       2.002
-  j_2                  STORAGE      7.093    7.133     2  21:25        30.8        37.1       1.817
-  j_20                 STORAGE      0.880    0.880     2  21:30        5.06        5.06       0.592
+  Wastewater_Treatment_Plant OUTFALL      0.000    1.167     1  21:23           0        28.2       0.000
+  cso_21b              OUTFALL      0.000    0.028     1  16:34           0        2.68       0.000
+  cso_2b               OUTFALL      0.000    0.556     1  22:08           0          19       0.000
+  j_1                  STORAGE      2.298    2.572     1  21:15        8.31        28.1      -1.309
+  j_21                 STORAGE      0.585    0.585     2  21:30         2.8         2.8       0.979
+  j_10                 STORAGE      1.999    1.999     1  21:20         5.7         5.7       1.218
+  j_2                  STORAGE      7.093    7.108     2  21:30        30.8        32.7      -1.653
+  j_20                 STORAGE      0.880    0.880     2  21:30        5.06        5.06       0.006
   
   
   **********************
@@ -197,11 +200,11 @@
                           Volume   Pcnt   Pcnt   Pcnt      Volume   Pcnt     Occurrence    Outflow
   Storage Unit           1000 m³   Full   Loss   Loss     1000 m³   Full    days hr:min        CMS
   ------------------------------------------------------------------------------------------------
-  j_1                      0.274    7.7    0.0    0.0       3.120   87.5       1  21:25      1.866
-  j_21                     0.076    5.8    0.0    0.0       0.640   48.9       2  23:49      0.042
-  j_10                     0.041    0.4    0.0    0.0       1.753   15.0       1  21:37      0.272
-  j_2                      0.227    1.4    0.0    0.0       5.753   36.4       2  22:00      1.056
-  j_20                     0.682   24.9    0.0    0.0       1.905   69.5       2  22:10      0.023
+  j_1                      0.399   11.2    0.0    0.0       3.113   87.3       1  21:25      1.748
+  j_21                     0.031    2.4    0.0    0.0       0.558   42.6       2  22:05      0.053
+  j_10                     0.023    0.2    0.0    0.0       1.520   13.0       1  21:30      0.272
+  j_2                      0.106    0.7    0.0    0.0       5.305   33.5       2  22:00      1.055
+  j_20                     1.047   38.2    0.0    0.0       2.116   77.2       2  21:30      0.611
   
   
   ***********************
@@ -213,16 +216,16 @@
                          Freq      Flow      Flow      Volume
   Outfall Node           Pcnt       CMS       CMS    10^6 ltr
   -----------------------------------------------------------
-  cso_1                  0.06     0.314     0.699       0.063
-  cso_20                 0.35     0.003     0.008       0.004
-  cso_2a                 0.00     0.000     0.000       0.000
+  cso_1                  0.05     0.228     0.581       0.040
+  cso_20                10.80     0.044     0.609       1.626
+  cso_2a                 0.00     0.003     0.003       0.000
   cso_21a                0.00     0.000     0.000       0.000
   cso_10                 0.00     0.000     0.000       0.000
-  Wastewater_Treatment_Plant  35.06     0.386     1.167      46.821
-  cso_21b                0.00     0.000     0.000       0.000
-  cso_2b                 1.64     0.555     0.556       3.151
+  Wastewater_Treatment_Plant  72.39     0.113     1.167      28.213
+  cso_21b              100.00     0.008     0.028       2.679
+  cso_2b                54.48     0.101     0.556      19.040
   -----------------------------------------------------------
-  System                 4.64     1.258     1.866      50.038
+  System                29.71     0.496     1.838      51.598
   
   
   ********************
@@ -234,16 +237,16 @@
                                   |Flow|   Occurrence   |Veloc|    Full    Full
   Link                 Type          CMS  days hr:min     m/sec    Flow   Depth
   -----------------------------------------------------------------------------
-  p_20_2               PUMP        0.015     0  00:37              1.00
+  p_20_2               PUMP        0.015     0  06:15              1.00
   WWTP_inlet           PUMP        1.167     1  21:23              1.00
-  p_21_2               PUMP        0.042     2  23:49              1.00
-  CSO_Pump_21          PUMP        0.000     0  00:00              0.00
-  p10_1                PUMP        0.272     0  17:24              0.39
-  p_2_1                PUMP        0.500     2  21:54              1.00
-  CSO_Pump_2           PUMP        0.556     2  21:39              1.00
-  cso_weir_1           WEIR        0.699     1  21:25                      0.05
-  cso_weir_20          WEIR        0.008     2  22:10                      0.00
-  cso_weir_2           WEIR        0.000     0  00:00                      0.00
+  p_21_2               PUMP        0.025     2  06:25              0.60
+  CSO_Pump_21          PUMP        0.028     1  16:34              1.00
+  p10_1                PUMP        0.272     1  17:38              0.39
+  p_2_1                PUMP        0.499     2  22:00              1.00
+  CSO_Pump_2           PUMP        0.556     1  22:08              1.00
+  cso_weir_1           WEIR        0.581     1  21:25                      0.04
+  cso_weir_20          WEIR        0.609     2  21:30                      0.07
+  cso_weir_2           WEIR        0.003     2  06:25                      0.00
   cso_weir_21          WEIR        0.000     0  00:00                      0.00
   cso_weir_10          WEIR        0.000     0  00:00                      0.00
   
@@ -275,15 +278,15 @@
                         Percent   Number of      Flow      Flow      Flow    Volume     Usage    Pump Curve
   Pump                 Utilized   Start-Ups       CMS       CMS       CMS  10^6 ltr     Kw-hr    Low   High
   ---------------------------------------------------------------------------------------------------------
-  p_20_2                  68.03         161      0.00      0.01      0.01     3.526     18.84    0.0  100.0
-  WWTP_inlet              35.06         338      0.00      0.39      1.17    46.821     86.00    0.0    0.0
-  p_21_2                  30.63          43      0.00      0.03      0.04     2.782     16.03    0.0    0.0
-  CSO_Pump_21              0.00           0      0.00      0.00      0.00     0.000      0.00    0.0    0.0
-  p10_1                    5.91          26      0.00      0.27      0.27     5.551     17.37    0.0    0.0
-  p_2_1                   26.22        2479      0.00      0.37      0.50    33.267     68.95    0.0    0.0
-  CSO_Pump_2               1.64           2      0.00      0.55      0.56     3.151      5.86    0.0    0.0
+  p_20_2                  36.72          16      0.00      0.01      0.01     1.809     12.85    0.0   92.6
+  WWTP_inlet              72.39          12      0.00      0.11      1.17    28.213     63.06    0.0    0.0
+  p_21_2                  12.50           6      0.00      0.00      0.03     0.094      0.52    0.0    0.0
+  CSO_Pump_21            100.00           1      0.00      0.01      0.03     2.679      9.06    0.0    0.0
+  p10_1                   99.94          27      0.00      0.02      0.27     5.636     19.80    0.0    0.0
+  p_2_1                   54.47       19744      0.00      0.08      0.50    14.162     40.67    0.0    0.0
+  CSO_Pump_2              54.47       19744      0.00      0.10      0.56    19.039     34.46    0.0    0.0
   
 
-  Analysis begun on:  Wed Jun 26 12:43:52 2024
-  Analysis ended on:  Wed Jun 26 12:44:30 2024
-  Total elapsed time: 00:00:38
+  Analysis begun on:  Wed Jun 26 17:33:19 2024
+  Analysis ended on:  Wed Jun 26 17:33:31 2024
+  Total elapsed time: 00:00:12

@@ -19,15 +19,15 @@ def main():
     }
 
     parameters = [
-         [6, 11, 6, 16, "Major event june"],
-         [12, 10, 12, 20, "Minor event december"],
-         [9, 22, 9, 30, "Multiple average events september"],
-         [2, 8, 2, 12, "3 major events february"],
-         [2, 20, 2, 22, "Peak intensity event february"],
-     ]
+        [6, 11, 6, 16, "Major event june"],
+        [12, 10, 12, 20, "Minor event december"],
+        [9, 22, 9, 30, "Multiple average events september"],
+        [2, 8, 2, 12, "3 major events february"],
+        [2, 20, 2, 22, "Peak intensity event february"],
+    ]
     # parameters = [[6, 1, 7, 1, 'SWMM JUNE TEST']] #Test params
     simulation = 1
-   # parameters, simulation = [[1, 1, 12, 31, "Full year sim"]], "full"
+    # parameters, simulation = [[1, 1, 12, 31, "Full year sim"]], "full"
     som, cso_sum = 0, 0
     for params in parameters:
         simulate(*params, simulation)
@@ -87,31 +87,31 @@ def simulate(
         sim.end_time = dt.datetime(year=2020, month=end_month, day=end_day)
 
         for step in sim:
-            """            
-            if nodes["j_1"].depth >= 0.25:
-                links["WWTP_inlet"].target_setting = 1
-            if nodes["j_1"].depth <= 0.10:
-                links["WWTP_inlet"].target_setting = 0
-            if nodes["j_21"].depth >= 0.25:
-                links["p_21_2"].target_setting = 1
-            if nodes["j_21"].depth <= 0.10:
-                links["p_21_2"].target_setting = 0
-            if nodes["j_21"].depth >= 1.10:
-                links["CSO_Pump_21"].target_setting = 1
-            if nodes["j_21"].depth <= 0.9:
-                links["CSO_Pump_21"].target_setting = 0
-            if nodes["j_10"].depth >= 0.25:
-                links["p10_1"].target_setting = 1
-            if nodes["j_10"].depth <= 0.10:
-                links["p10_1"].target_setting = 0
-            if nodes["j_2"].depth >= 0.25:
-                links["p_2_1"].target_setting = 1
-            if nodes["j_2"].depth <= 0.10:
-                links["p_2_1"].target_setting = 0
-            if nodes["j_2"].depth >= 2.5:
-                links["CSO_Pump_2"].target_setting = 1
-            if nodes["j_2"].depth <= 2.0:
-                links["CSO_Pump_2"].target_setting = 0"""
+
+            # if nodes["j_1"].depth >= 0.25:
+            #     links["WWTP_inlet"].target_setting = 1
+            # if nodes["j_1"].depth <= 0.10:
+            #     links["WWTP_inlet"].target_setting = 0
+            # if nodes["j_21"].depth >= 0.25:
+            #     links["p_21_2"].target_setting = 1
+            # if nodes["j_21"].depth <= 0.10:
+            #     links["p_21_2"].target_setting = 0
+            # if nodes["j_21"].depth >= 1.10:
+            #     links["CSO_Pump_21"].target_setting = 1
+            # if nodes["j_21"].depth <= 0.9:
+            #     links["CSO_Pump_21"].target_setting = 0
+            # if nodes["j_10"].depth >= 0.25:
+            #     links["p10_1"].target_setting = 1
+            # if nodes["j_10"].depth <= 0.10:
+            #     links["p10_1"].target_setting = 0
+            # if nodes["j_2"].depth >= 0.25:
+            #     links["p_2_1"].target_setting = 1
+            # if nodes["j_2"].depth <= 0.10:
+            #     links["p_2_1"].target_setting = 0
+            # if nodes["j_2"].depth >= 2.5:
+            #     links["CSO_Pump_2"].target_setting = 1
+            # if nodes["j_2"].depth <= 2.0:
+            #     links["CSO_Pump_2"].target_setting = 0
 
             links = assign_target(*rule.p10_1(nodes), links)
             links = assign_target(*rule.p_21_2(nodes), links)
@@ -120,7 +120,6 @@ def simulate(
             links = assign_target(*rule.p_2_1(nodes), links)
             links = assign_target(*rule.CSO_Pump_2(nodes), links)
             links = assign_target(*rule.p_20_2(nodes), links)
-          
 
 
 def assign_target(id: str, target: float, links):
