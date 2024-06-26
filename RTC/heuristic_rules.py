@@ -34,9 +34,9 @@ def p_20_2(nodes, target=None):
 
 
 def CSO_Pump_2(nodes, target=None):
-    if nodes["j_2"].depth >= 2.0:
+    if nodes["j_2"].depth >= 1.8:
         target = 1
-    if nodes["j_2"].depth <= 1.7:
+    if nodes["j_2"].depth <= 1.5:
         target = 0
     return "CSO_Pump_2", target
 
